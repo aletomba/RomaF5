@@ -1,0 +1,87 @@
+﻿@model PagedList.IPagedList<Turno>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";   
+}
+
+<h1 style="text-align:center">Turnos</h1>
+
+<p>
+    <a asp-action="Create">Crear Turno</a>
+</p>
+<div class="form-group row">
+    <label for="fechaFiltro" class="col-sm-3 col-form-label font-family-sans-serif"></label>
+    <div class="col-sm-6">
+        <input type="date" id="fechaFiltro" class="form-control font-family-monospace" />
+    </div>
+    <div class="col-sm-3">
+        <button id="btnFiltrar" class="btn btn-primary font-family-serif">Filtrar</button>
+        <button id="btnLimpiarFiltro" class="btn btn-secondary font-family-cursive">Limpiar filtro</button>
+    </div>
+</div>
+
+<table class="table" id="tablaTurnos">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Descripcion)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().FechaInicio)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().NumeroCancha)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Pagado)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Cliente)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr data-fecha="@item.FechaInicio.ToString("yyyy-MM-dd")">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Descripcion)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FechaInicio)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumeroCancha)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Pagado)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cliente.Nombre)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Detalles</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Borrar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<!-- Resto del código de la vista -->
+
+<!-- Enlaces de paginación -->
+<div class="pagination-container">
+    <partial name="_Paginacion" model="Model" />
+</div>
+
+@section Scripts {
+    <script src="~/js/filtroTurnos.js"></script>
+}
+
+
+
+
+

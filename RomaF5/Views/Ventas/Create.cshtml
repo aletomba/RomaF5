@@ -1,0 +1,87 @@
+﻿@model RomaF5.Models.Venta
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";    
+    var productos = (List<Producto>)ViewBag.Productos;
+}
+
+<h4 style="text-align:center">Venta</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create">
+            <div class="form-group">
+                <label asp-for="Fecha" class="control-label"></label>
+                <input asp-for="Fecha" class="form-control" />
+                <span asp-validation-for="Fecha" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label>Cliente:</label>
+                <select asp-for="ClienteId" class="form-control">
+                    @foreach (var cliente in ViewBag.Clientes)
+                    {
+                        <option value="@cliente.Id">@cliente.Nombre</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Productos:</label>
+                <input type="text" id="searchInput" class="form-control" placeholder="Buscar producto..." />
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var producto in productos.Take(5))
+                        {
+                            <tr class="productRow">
+                                <td>
+                                    <input type="hidden" name="VentasProductos.Index" value="@producto.Id" />
+                                    <input type="hidden" name="VentasProductos[@producto.Id].ProductoId" value="@producto.Id" />
+                                    <label>@producto.Nombre</label>
+                                </td>
+                                <td>
+                                    <select name="VentasProductos[@producto.Id].Cantidad" class="form-control">
+                                        @for (int i = 0; i <= 10; i++)
+                                        {
+                                            <option value="@i" selected="@(i == 0)">@(i.ToString())</option>
+                                        }
+                                    </select>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <!-- Lista de productos seleccionados -->
+        <div class="form-group">
+            <label style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">Carrito:</label>
+            <ul id="productosSeleccionados"></ul>
+        </div>
+    </div>
+</div>
+@if (!string.IsNullOrEmpty(ViewBag.StockAlert))
+{
+    <div class="alert alert-success">
+        @ViewBag.StockAlert
+    </div>
+}
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="~/js/Venta.js"></script>
+}
+

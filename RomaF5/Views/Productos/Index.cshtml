@@ -1,0 +1,83 @@
+﻿@model PagedList.IPagedList<Producto>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";    
+}
+
+<h1 style="text-align:center">Productos</h1>
+
+<p>
+    <a asp-action="Create">CREAR PRODUCTO</a>
+</p>
+<!-- Formulario de búsqueda -->
+<div class="form-group" >
+    <input type="text" id="searchInput" class="form-control" placeholder="Buscar producto..." />
+    <button type="button" class="btn btn-primary mt-2" onclick="filtrarProductos()">Buscar</button>
+</div>
+
+<table  id="productosTable" class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Nombre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Precio)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Stock)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Precio)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Stock)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Detalles</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Borrar</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<div class="pagination-container">
+    <partial name="_Paginacion" model="Model" />
+</div>
+
+@section Scripts {
+    <script>
+        function filtrarProductos() {
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("searchInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("productosTable");
+            tr = table.getElementsByTagName("tr");
+
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[0]; // 0 representa la columna de Nombre del producto
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>
+}
+

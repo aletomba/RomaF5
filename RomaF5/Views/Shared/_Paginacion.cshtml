@@ -1,0 +1,16 @@
+﻿@if (Model.PageCount > 1)
+{
+    <div class="pagination">
+        @if (Model.HasPreviousPage)
+        {
+            <a href="@Url.Action("Index", new { page = Model.PageNumber - 1 })">Anterior</a>
+        }
+
+        <span>@Model.PageNumber </span>
+
+        @if (Model.HasNextPage)
+        {
+            <a href="@Url.Action("Index", new { page = Model.PageNumber + 1 })">Siguiente</a>
+        }
+    </div>
+}

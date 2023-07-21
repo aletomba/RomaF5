@@ -1,0 +1,24 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+    background-color:beige; /* Cambia este valor al color deseado */
+}
+.footer {
+    background-color:black; /* Cambia este valor al color deseado */
+    color: white; /* Cambia este valor al color del texto deseado */
+    padding: 20px; /* Agrega espacio interno al footer para mejorar su aspecto */
+}
