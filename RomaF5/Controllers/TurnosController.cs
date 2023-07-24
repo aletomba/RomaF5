@@ -34,7 +34,7 @@ namespace RomaF5.Controllers
 
             return View(resultadoPaginado);          
         }
-
+        [Authorize(Roles = "ADMIN")]
         // GET: Turnos/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -85,7 +85,7 @@ namespace RomaF5.Controllers
             ViewData["ClienteId"] = new SelectList(_clienteRepo.GetAllAsync().Result, "Id", "Nombre", turno.ClienteId);
             return View(turno);
         }
-
+        [Authorize(Roles ="ADMIN")]
         // GET: Turnos/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -131,7 +131,7 @@ namespace RomaF5.Controllers
             ViewData["ClienteId"] = new SelectList(_clienteRepo.GetAllAsync().Result, "Id", "Nombre", turno.ClienteId);
             return View(turno);
         }
-
+        [Authorize(Roles ="ADMIN")]
         // GET: Turnos/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {

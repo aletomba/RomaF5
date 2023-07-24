@@ -22,6 +22,7 @@ namespace RomaF5.Controllers
             _clienteRepository = clienteRepository;
         }
 
+        [Authorize(Roles ="ADMIN")]
         // GET: Clientes
         public async Task<IActionResult> Index()
         {
@@ -32,7 +33,7 @@ namespace RomaF5.Controllers
             }
             return View(clientes);
         }
-
+        [Authorize(Roles = "ADMIN")]
         // GET: Clientes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -49,7 +50,7 @@ namespace RomaF5.Controllers
 
             return View(cliente);
         }
-
+        [Authorize]
         // GET: Clientes/Create
         public IActionResult Create()
         {
@@ -70,7 +71,7 @@ namespace RomaF5.Controllers
             }
             return View(cliente);
         }
-
+        [Authorize(Roles = "ADMIN")]
         // GET: Clientes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -114,7 +115,7 @@ namespace RomaF5.Controllers
             }
             return View(cliente);
         }
-
+        [Authorize(Roles = "ADMIN")]
         // GET: Clientes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {

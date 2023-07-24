@@ -36,6 +36,7 @@ namespace RomaF5.Controllers
             return View(ventasPaginado);
         }
 
+        [Authorize(Roles = "ADMIN")]
         // GET: Ventas/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -103,6 +104,7 @@ namespace RomaF5.Controllers
 
 
         // GET: Ventas/Edit/5
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -146,6 +148,7 @@ namespace RomaF5.Controllers
         }
 
         // GET: Ventas/Delete/5
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

@@ -30,7 +30,7 @@ namespace RomaF5.Controllers
             
             return View(productosPaginados);
         }
-
+        [Authorize(Roles ="ADMIN")]
         // GET: Productos/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -48,7 +48,7 @@ namespace RomaF5.Controllers
 
             return View(producto);
         }
-
+        [Authorize(Roles = "ADMIN")]
         // GET: Productos/Create
         public IActionResult Create()
         {
@@ -69,7 +69,7 @@ namespace RomaF5.Controllers
             }
             return View(producto);
         }
-
+        [Authorize(Roles = "ADMIN")]
         // GET: Productos/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -114,7 +114,7 @@ namespace RomaF5.Controllers
             }
             return View(producto);
         }
-
+        [Authorize(Roles = "ADMIN")]
         // GET: Productos/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
