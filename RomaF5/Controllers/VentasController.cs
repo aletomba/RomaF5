@@ -6,10 +6,11 @@ using Microsoft.EntityFrameworkCore;
 using PagedList;
 using RomaF5.IRepository;
 using RomaF5.Models;
+using System.Drawing.Printing;
 
 namespace RomaF5.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class VentasController : Controller
     {
         private readonly VentaRepository _ventaRepository;
@@ -58,7 +59,8 @@ namespace RomaF5.Controllers
         public async Task <IActionResult> Create()
         {
             ViewBag.Clientes = await _clienteRepo.GetAllAsync(); 
-            ViewBag.Productos = await _prodRepo.GetAllAsync();
+            ViewBag.Productos = await _prodRepo.GetAllAsync();                      
+
             return View();
         }
 
@@ -148,7 +150,7 @@ namespace RomaF5.Controllers
         }
 
         // GET: Ventas/Delete/5
-        [Authorize(Roles = "ADMIN")]
+        //[Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

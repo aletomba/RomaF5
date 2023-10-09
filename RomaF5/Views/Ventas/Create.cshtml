@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Create";
-    Layout = "~/Views/Shared/_Layout.cshtml";    
+    Layout = "~/Views/Shared/_Layout.cshtml";
     var productos = (List<Producto>)ViewBag.Productos;
 }
 
@@ -36,9 +36,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var producto in productos.Take(5))
+                        @foreach (var producto in productos)
                         {
-                            <tr class="productRow">
+                            <tr class="productRow" data-producto-id="@producto.Id" data-precio="@producto.Precio">
                                 <td>
                                     <input type="hidden" name="VentasProductos.Index" value="@producto.Id" />
                                     <input type="hidden" name="VentasProductos[@producto.Id].ProductoId" value="@producto.Id" />
@@ -65,23 +65,28 @@
         <div class="form-group">
             <label style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">Carrito:</label>
             <ul id="productosSeleccionados"></ul>
+
+            <!-- Total del precio -->
+            <div style="font-weight: bold; text-align: right; margin-top: 20px;">Total Precio: <span id="totalPrecioCarrito">$0.00</span></div>
         </div>
     </div>
 </div>
+
 @if (!string.IsNullOrEmpty(ViewBag.StockAlert))
 {
     <div class="alert alert-success">
         @ViewBag.StockAlert
     </div>
 }
+
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
     <script src="~/js/Venta.js"></script>
 }
+
+
+
 

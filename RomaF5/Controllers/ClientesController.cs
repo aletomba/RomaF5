@@ -12,7 +12,7 @@ using RomaF5.Models;
 
 namespace RomaF5.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class ClientesController : Controller
     {
         private readonly IRepository<Cliente> _clienteRepository;
@@ -22,7 +22,7 @@ namespace RomaF5.Controllers
             _clienteRepository = clienteRepository;
         }
 
-        [Authorize(Roles ="ADMIN")]
+        [Authorize(Roles = "ADMIN")]
         // GET: Clientes
         public async Task<IActionResult> Index()
         {

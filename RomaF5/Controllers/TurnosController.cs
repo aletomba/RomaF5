@@ -8,7 +8,7 @@ using RomaF5.Models;
 
 namespace RomaF5.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class TurnosController : Controller
     {
         private readonly TurnoRepository _turnoRepo;

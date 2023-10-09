@@ -2,8 +2,7 @@
 
 @{
     ViewData["Title"] = "Index";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-    var paginatedList = ViewBag.PaginatedList;
+    Layout = "~/Views/Shared/_Layout.cshtml";   
 }
 
 <h1 style="text-align:center"> VENTAS</h1>
@@ -57,11 +56,13 @@
             </tr>
         }
     </tbody>
+   
 </table>
-<div id="totalDia" style="text-align: right; margin-top: 20px; font-weight: bold;"></div>
 <div class="pagination-container">
     <partial name="_Paginacion" model="Model" />
 </div>
+<div id="totalDia" style="text-align: right; margin-top: 20px; font-weight: bold;"></div>
+
 
 @section Scripts {
     <script src="~/js/filtroTurnos.js" defer></script>

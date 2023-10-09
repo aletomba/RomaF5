@@ -7,7 +7,7 @@ using RomaF5.Models;
 
 namespace RomaF5.Controllers
 {
-    [Authorize]
+    //[Authorize]
 	public class ProductosController : Controller
     {
 		private readonly IRepository<Producto> _productoRepository;
@@ -114,7 +114,7 @@ namespace RomaF5.Controllers
             }
             return View(producto);
         }
-        [Authorize(Roles = "ADMIN")]
+        //[Authorize(Roles = "ADMIN")]
         // GET: Productos/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
