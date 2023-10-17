@@ -79,7 +79,7 @@ public class AccountController : Controller
         // Limpiar la autenticación actual, incluidas las cookies de autenticación
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-        return RedirectToAction("Index", "Home");
+        return RedirectToAction("Login", "Account");
     }
 }
 

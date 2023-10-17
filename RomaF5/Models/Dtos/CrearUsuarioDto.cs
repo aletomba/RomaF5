@@ -6,7 +6,7 @@ namespace RomaF5.Models.Dtos
     {
         public string? Id { get; set; }
         [Required]
-        [EmailAddress]
+       
         public string Email { get; set; }
         
         [Required]        

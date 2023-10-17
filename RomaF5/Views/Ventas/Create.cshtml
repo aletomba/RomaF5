@@ -27,7 +27,7 @@
             </div>
             <div class="form-group">
                 <label>Productos:</label>
-                <input type="text" id="searchInput" class="form-control" placeholder="Buscar producto..." />
+                <input type="text" id="searchInput" class="form-control" placeholder="Buscar producto..." autocomplete="off" />
                 <table class="table table-bordered">
                     <thead>
                         <tr>
@@ -45,19 +45,14 @@
                                     <label>@producto.Nombre</label>
                                 </td>
                                 <td>
-                                    <select name="VentasProductos[@producto.Id].Cantidad" class="form-control">
-                                        @for (int i = 0; i <= 10; i++)
-                                        {
-                                            <option value="@i" selected="@(i == 0)">@(i.ToString())</option>
-                                        }
-                                    </select>
+                                    <input type="text" name="VentasProductos[@producto.Id].Cantidad" class="form-control" pattern="[0-9]+(\.[0-9]+)?" title="cantidad" placeholder="0.0" />
                                 </td>
                             </tr>
                         }
                     </tbody>
                 </table>
             </div>
-            <button type="submit" class="btn btn-primary">Guardar</button>
+            <button type="submit" class="btn btn-primary">Aceptar</button>
         </form>
     </div>
     <div class="col-md-6">

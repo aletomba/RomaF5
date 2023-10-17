@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Castle.Core.Internal;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +8,7 @@ using RomaF5.Models.Dtos;
 
 namespace RomaF5.Controllers
 {
-    //[Authorize(Roles ="ADMIN")]
+    [Authorize(Roles = "ADMIN")]
     public class UsuariosController : Controller
     {
         private readonly UserManager<IdentityUser> _userManager;
@@ -16,7 +17,7 @@ namespace RomaF5.Controllers
         public UsuariosController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
-            _roleManager = roleManager; 
+            _roleManager = roleManager;
         }
 
         // GET: UsuariosController
@@ -58,7 +59,7 @@ namespace RomaF5.Controllers
         // POST: UsuariosController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task <ActionResult> Create(CrearUsuarioDto model)
+        public async Task<ActionResult> Create(CrearUsuarioDto model)
         {
             if (ModelState.IsValid)
             {
@@ -117,7 +118,7 @@ namespace RomaF5.Controllers
 
         // POST: UsuariosController/Edit/5
         [HttpPost]
-        [ValidateAntiForgeryToken]         
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, CrearUsuarioDto model)
         {
             if (id != model.Id)
@@ -171,27 +172,65 @@ namespace RomaF5.Controllers
             }
 
             return View(model);
-        }      
+        }
 
         // GET: UsuariosController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(string id)
         {
-            return View();
+            if (string.IsNullOrEmpty(id))
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            var roles = await _userManager.GetRolesAsync(user);
+
+            var model = new CrearUsuarioDto
+            {
+                Id = user.Id,
+                Email = user.Email,
+                Role = roles.FirstOrDefault()
+            };
+
+            return View(model);
         }
 
         // POST: UsuariosController/Delete/5
-        [HttpPost]
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<IActionResult> DeleteAction(string id)
         {
+            if (string.IsNullOrEmpty(id))
+            {
+                return NotFound();
+            }
             try
             {
-                return RedirectToAction(nameof(Index));
+                var user = await _userManager.FindByIdAsync(id);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                var result = await _userManager.DeleteAsync(user);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+
             }
-            catch
+            catch (Exception)
             {
-                return View();
+                ModelState.AddModelError(string.Empty, "Ocurrió un error al eliminar el usuario.");
             }
+            return View();
         }
     }
 }

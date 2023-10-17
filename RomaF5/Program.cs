@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RomaF5.Data;
 using RomaF5.IRepository;
-
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +37,9 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<TurnoRepository>();
 builder.Services.AddScoped<VentaRepository>();
 
+var culture = new CultureInfo("en-US");
+CultureInfo.DefaultThreadCurrentCulture = culture;
+CultureInfo.DefaultThreadCurrentUICulture = culture;
 
 var app = builder.Build();
 

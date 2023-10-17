@@ -10,7 +10,7 @@ using System.Drawing.Printing;
 
 namespace RomaF5.Controllers
 {
-    //[Authorize]
+    [Authorize]
     public class VentasController : Controller
     {
         private readonly VentaRepository _ventaRepository;
@@ -68,12 +68,12 @@ namespace RomaF5.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Venta venta)
-        {
+        {          
             try
             {
                 if (ModelState.IsValid)
                 {
-                    decimal total = 0;
+                    float? total = 0;
                     foreach (var ventaProducto in venta.VentasProductos)
                     {
                         var prod = await _prodRepo.GetAllAsync();
@@ -150,7 +150,7 @@ namespace RomaF5.Controllers
         }
 
         // GET: Ventas/Delete/5
-        //[Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

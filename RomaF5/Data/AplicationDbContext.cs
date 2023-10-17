@@ -22,12 +22,7 @@ namespace RomaF5.Data
 		public DbSet<Producto> Productos { get; set; }
 		public DbSet<Turno> Turnos { get; set; }
 		public DbSet<VentaProducto> VentaProductos { get; set; }
-        // ...
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    optionsBuilder.UseSqlite();
-
-        // Otros métodos y configuraciones
+      
         protected override void OnModelCreating(ModelBuilder modelBuilder) 
 		{
 			base.OnModelCreating(modelBuilder);
@@ -46,16 +41,7 @@ namespace RomaF5.Data
 			modelBuilder.Entity<VentaProducto>()
 				.HasKey(vp => new { vp.VentaId, vp.ProductoId });
 
-         //   modelBuilder.Entity<IdentityUserLogin<string>>(entity =>
-         //   {
-         //       entity.HasKey(l => new { l.LoginProvider, l.ProviderKey, l.UserId });
-         //   });
-
-         //   modelBuilder.Entity<IdentityUserRole<string>>().HasKey(ur => new { ur.UserId, ur.RoleId });
-
-         //   modelBuilder.Entity<IdentityUserRole<string>>()
-									//.HasKey(r => new { r.UserId, r.RoleId });
-            // ...
+      
         }
 	}
 

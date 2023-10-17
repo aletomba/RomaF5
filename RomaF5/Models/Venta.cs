@@ -7,8 +7,7 @@
 		public int ClienteId { get; set; }
 		public Cliente? Cliente { get; set; }
 		public List<VentaProducto>? VentasProductos { get; set; }
-		public decimal? Total { get;set; }
-
+		public float? Total { get;set; }
 	
 	}
 

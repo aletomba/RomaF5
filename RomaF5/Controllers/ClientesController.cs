@@ -12,7 +12,7 @@ using RomaF5.Models;
 
 namespace RomaF5.Controllers
 {
-    //[Authorize]
+    [Authorize]
     public class ClientesController : Controller
     {
         private readonly IRepository<Cliente> _clienteRepository;
