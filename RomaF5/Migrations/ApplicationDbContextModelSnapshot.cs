@@ -15,7 +15,7 @@ namespace RomaF5.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "6.0.20");
+            modelBuilder.HasAnnotation("ProductVersion", "6.0.27");
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -156,9 +156,11 @@ namespace RomaF5.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
+                        .HasMaxLength(128)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ProviderKey")
+                        .HasMaxLength(128)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ProviderDisplayName")
@@ -196,9 +198,11 @@ namespace RomaF5.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LoginProvider")
+                        .HasMaxLength(128)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
+                        .HasMaxLength(128)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Value")
@@ -207,6 +211,21 @@ namespace RomaF5.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("ProductoProveedor", b =>
+                {
+                    b.Property<int>("ProductosId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ProveedoresId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("ProductosId", "ProveedoresId");
+
+                    b.HasIndex("ProveedoresId");
+
+                    b.ToTable("ProductoProveedor");
                 });
 
             modelBuilder.Entity("RomaF5.Models.Cancha", b =>
@@ -253,10 +272,15 @@ namespace RomaF5.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Nombre")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("Precio")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("PrecioMayorista")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("PrecioVenta")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Stock")
@@ -265,6 +289,23 @@ namespace RomaF5.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Productos");
+                });
+
+            modelBuilder.Entity("RomaF5.Models.Proveedor", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Nombre")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NumeroCelular")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Proveedor");
                 });
 
             modelBuilder.Entity("RomaF5.Models.Turno", b =>
@@ -390,6 +431,21 @@ namespace RomaF5.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ProductoProveedor", b =>
+                {
+                    b.HasOne("RomaF5.Models.Producto", null)
+                        .WithMany()
+                        .HasForeignKey("ProductosId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RomaF5.Models.Proveedor", null)
+                        .WithMany()
+                        .HasForeignKey("ProveedoresId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

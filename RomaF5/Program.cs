@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RomaF5.Data;
 using RomaF5.IRepository;
+using Rotativa.AspNetCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -36,30 +37,32 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<TurnoRepository>();
 builder.Services.AddScoped<VentaRepository>();
+builder.Services.AddScoped<ProductoRepo>();
+builder.Services.AddScoped<ProveedorRepository>();
+
 
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-//if (!app.Environment.IsDevelopment())
-//{
-//    app.UseExceptionHandler("/Home/Error");
-//    app.UseHsts();
-//}
+var env = app.Services.GetRequiredService<IWebHostEnvironment>();
+if (env.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+RotativaConfiguration.Setup(env.WebRootPath, "rotativa");
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-   
+
 // Enable authentication and authorization
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseRotativa();  
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Account}/{action=Login}/{id?}");
- 
 
 app.Run();
 

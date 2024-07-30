@@ -22,6 +22,7 @@ namespace RomaF5.Data
 		public DbSet<Producto> Productos { get; set; }
 		public DbSet<Turno> Turnos { get; set; }
 		public DbSet<VentaProducto> VentaProductos { get; set; }
+        public DbSet<Proveedor> Proveedor { get; set; }
         // ...
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{

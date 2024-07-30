@@ -1,0 +1,54 @@
+﻿@model IEnumerable<RomaF5.Models.Proveedor>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 style="text-align:center">Proveedor</h1>
+
+<p>
+    <a asp-action="Create">Crear Proveedor</a>
+</p>
+
+<form asp-action="Index" method="get">
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Buscar proveedor..." name="searchString" value="@ViewBag.CurrentFilter">
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="submit">Buscar</button>
+        </div>
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Nombre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumeroCelular)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumeroCelular)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |                    
+                    <a asp-action="Delete" asp-route-id="@item.Id">Borrar</a> |
+                    <a asp-controller="Productos" asp-action="Index" asp-route-id="@item.Id">Ver Productos</a> |
+                    <a asp-action="CambiarPrecio" asp-route-id="@item.Id">Cambiar Precios</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

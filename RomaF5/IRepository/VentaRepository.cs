@@ -48,5 +48,15 @@ namespace RomaF5.IRepository
              _context.Update(entity);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<List<Venta>> GetByDate(DateTime fecha)
+        {
+           var fechas = await _context.Ventas.Include(x=>x.Cliente)
+                                             .Include(x => x.VentasProductos)
+                                             .ThenInclude(x => x.Producto)
+                                             .Where(x => x.Fecha.Date == fecha.Date).ToListAsync();
+
+            return fechas;  
+        }
     }
 }

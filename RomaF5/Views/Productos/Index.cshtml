@@ -2,7 +2,8 @@
 
 @{
     ViewData["Title"] = "Index";
-    Layout = "~/Views/Shared/_Layout.cshtml";    
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var paginatedList = ViewBag.PaginatedList;
 }
 
 <h1 style="text-align:center">Productos</h1>
@@ -10,13 +11,32 @@
 <p>
     <a asp-action="Create">CREAR PRODUCTO</a>
 </p>
+<form method="post" action="/Productos/DescargarPdfM" style="display:inline-block">
+    <input type="hidden" name="esMayorista" value="true">
+    <button type="submit" class="btn btn-success">Descargar PDF Mayorista</button>
+</form>
+
+<form method="post" action="/Productos/DescargarPdfV" style="display:inline-block">
+    <input type="hidden" name="esMayorista" value="false">
+    <button type="submit" class="btn btn-success">Descargar PDF Minorista</button>
+</form>
+
+@* 
+<a asp-action="DescargarPdfV" value="minorista" class="btn btn-success">Descargar PDFV</a>
+<a asp-action="DescargarPdfM" name="esMayorista" value="true" class="btn btn-success">Descargar PDFM</a> *@
+<br />
 <!-- Formulario de búsqueda -->
-<div class="form-group" >
+<div class="form-group">
     <input type="text" id="searchInput" class="form-control" placeholder="Buscar producto..." />
     <button type="button" class="btn btn-primary mt-2" onclick="filtrarProductos()">Buscar</button>
 </div>
 
-<table  id="productosTable" class="table">
+
+<div class="pagination-container">
+    <partial name="_Paginacion" model="Model" />
+</div>
+
+<table id="productosTable" class="table">
     <thead>
         <tr>
             <th>
@@ -26,36 +46,57 @@
                 @Html.DisplayNameFor(model => model.First().Precio)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.First().PrecioVenta)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().PrecioMayorista)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.First().Stock)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Proveedores)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nombre)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Precio)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Stock)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Detalles</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Borrar</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Precio)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PrecioVenta)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PrecioMayorista)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Stock)
+                </td>
+                <td>
+                    <ul>
+                        @foreach (var proveedor in item.Proveedores)
+                        {
+                            <li>@proveedor.Nombre</li>
+                        }
+                    </ul>
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Detalles</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Borrar</a>                   
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 
-<div class="pagination-container">
-    <partial name="_Paginacion" model="Model" />
-</div>
 
 @section Scripts {
     <script>

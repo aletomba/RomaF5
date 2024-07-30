@@ -7,7 +7,7 @@ using RomaF5.Models.Dtos;
 
 namespace RomaF5.Controllers
 {
-    [Authorize(Roles ="ADMIN")]
+    //[Authorize(Roles = "ADMIN")]
     public class UsuariosController : Controller
     {
         private readonly UserManager<IdentityUser> _userManager;

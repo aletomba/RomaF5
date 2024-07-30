@@ -1,0 +1,22 @@
+﻿@model RomaF5.Models.Proveedor
+
+@{
+    ViewData["Title"] = "Cambiar Precio";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h2>Cambiar Precio de Productos de @Model.Nombre</h2>
+
+<form asp-action="CambiarPrecio" method="post">
+    <div class="form-group">
+        <label for="porcentajeConsFinal">Porcentaje de Cambio Consumidor Final:</label>
+        <input type="number" class="form-control" id="porcentajeConsFinal" name="porcentajeConsFinal" required>
+    </div>
+    <div class="form-group">
+        <label for="porcentajeMayorista">Porcentaje de Cambio Mayorista:</label>
+        <input type="number" class="form-control" id="porcentajeMayorista" name="porcentajeMayorista" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Aplicar Cambio</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>

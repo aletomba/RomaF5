@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using PagedList;
 using RomaF5.IRepository;
 using RomaF5.Models;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace RomaF5.Controllers
 {
@@ -26,10 +28,19 @@ namespace RomaF5.Controllers
         }
 
         // GET: Ventas
-        public async Task<IActionResult> Index(int? page)
+        public async Task<IActionResult> Index(int? page, DateTime? fechaFiltro)
         {
-            int pageSize = 10; // Define el número de elementos por página
+            int pageSize = 5; // Define el número de elementos por página
             int pageNumber = page ?? 1;
+
+            if (fechaFiltro.HasValue)
+            {
+                // Filtrar las ventas por fecha
+                var ventasFecha = await _ventaRepository.GetByDate(fechaFiltro.Value);
+                var ventasFechaPag = ventasFecha.ToPagedList(pageNumber, pageSize);
+                return View(ventasFechaPag);
+            }
+        
 
             var ventas = await _ventaRepository.GetAllAsync();
             var ventasPaginado = ventas.ToPagedList(pageNumber, pageSize);
@@ -178,6 +189,17 @@ namespace RomaF5.Controllers
            
             return RedirectToAction(nameof(Index));
         }
-      
+        public async Task<IActionResult> FiltrarPorFecha(DateTime fecha)
+        {
+            var ventas = await _ventaRepository.GetAllAsync();
+            ventas = ventas.Where(v => v.Fecha.Date == fecha.Date).ToList();
+
+            var totalDia = ventas.Sum(v => v.Total ?? 0);
+
+            ViewBag.TotalDia = totalDia;
+            return View("Index", ventas);
+        }
+
+
     }
 }

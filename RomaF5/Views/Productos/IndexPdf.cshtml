@@ -1,0 +1,64 @@
+﻿@using RomaF5.Models.productosViewModels
+@model ProductoViewModel
+@* sacar provedores agregar color por renglon verde suave, link directo al insta 
+    modelo para crear catalogo
+    
+*@
+
+<head>
+    <link rel="stylesheet" href="~/css/pdf-styles.css" />
+</head>
+<h1>Lista de Precios "Tres pinos"</h1>
+<h2 style="font-family"> Hernan cel: 3442-647905</h2>
+<p>Sígueme en Instagram: <a href="https://www.instagram.com/trespinos.ok">trespinos.ok</a></p>
+
+@if (Model.EsMayorista)
+{
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Precio</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var producto in Model.Productos)
+                {
+                    <tr>
+                        <td>@producto.Nombre</td>
+                        <td>@producto.PrecioMayorista</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <br />
+    <br />
+}
+else
+{
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Precio</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var producto in Model.Productos)
+                {
+                    <tr>
+                        <td>@producto.Nombre</td>
+                        <td>@producto.Precio</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <br />
+    <br />
+}
+
