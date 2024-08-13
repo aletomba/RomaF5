@@ -14,7 +14,7 @@ html
     margin-bottom: auto;
     background: #f39c12;
     position: relative;
-    display: flex;
+    background-color: #6f9106;
     justify-content: center;
     flex-direction: column;
     padding: 10px;

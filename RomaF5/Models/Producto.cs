@@ -17,6 +17,9 @@ namespace RomaF5.Models
         public int Stock { get; set; }
 		public List<VentaProducto>? VentasProductos { get; set; } // Relación muchos a muchos con VentaProducto
         public List<Proveedor>? Proveedores { get; set; }
+        public string RutaImagen { get; set; }
+        [NotMapped]
+        public IFormFile Imagen { get; set; }             
         [NotMapped]
         public int[]? ProveedoresSeleccionados { get; set; }
         
@@ -27,12 +30,18 @@ namespace RomaF5.Models
         {
             if (Stock < cantidad)
             {
-                throw new InvalidOperationException("No hay suficiente stock disponible.");
+                throw new InvalidOperationException("No hay stock disponible.");
             }
 
             Stock -= cantidad;
          
         }      
+
+        public void CambiarPorcentaje(Producto producto)
+        {
+            producto.PrecioMayorista = producto.Precio + (producto.Precio * 55 / 100);
+            producto.PrecioVenta = producto.PrecioMayorista + (producto.PrecioMayorista * 70 / 100);
+        }
     }   
 
 }

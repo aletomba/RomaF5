@@ -3,6 +3,7 @@ using RomaF5.IRepository;
 using RomaF5.Models;
 using RomaF5.Models.productosViewModels;
 using Rotativa.AspNetCore;
+using Rotativa.AspNetCore.Options;
 
 namespace RomaF5.Controllers
 {
@@ -11,21 +12,21 @@ namespace RomaF5.Controllers
         private readonly ProductoRepo _productoRepo;
         public PdfController(ProductoRepo productoRepo)
         {
-            _productoRepo = productoRepo;     
+            _productoRepo = productoRepo;
         }
 
 
         public async Task<IActionResult> GenerarPdf(bool esMayorista)
         {
-            var viewModel = new ProductoViewModel { EsMayorista = esMayorista };           
+            var viewModel = new ProductoViewModel { EsMayorista = esMayorista };
             var productos = await ObtenerProductos(); // Aquí debes obtener tus productos de alguna manera
             viewModel.Productos = productos;
 
             return new ViewAsPdf("/Views/Productos/IndexPdf.cshtml", viewModel)
             {
                 FileName = "Lista_Productos.pdf",
-                CustomSwitches = "--print-media-type --no-background", // Añadir esta línea
-               
+                //CustomSwitches = $"--print-media-type --load-images"
+
             };
         }
 

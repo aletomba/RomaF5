@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RomaF5.Data;
 
@@ -10,9 +11,10 @@ using RomaF5.Data;
 namespace RomaF5.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240812131034_agregarImgProd")]
+    partial class agregarImgProd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.27");
@@ -271,6 +273,10 @@ namespace RomaF5.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Imagen")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Nombre")
                         .HasColumnType("TEXT");
 
@@ -281,10 +287,6 @@ namespace RomaF5.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("PrecioVenta")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("RutaImagen")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Stock")

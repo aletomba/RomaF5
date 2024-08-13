@@ -11,16 +11,17 @@ namespace RomaF5.Controllers
     [Authorize]
 	public class ProductosController : Controller
     {
-		    
+        private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly ProveedorRepository _proveedorRepository;
         private readonly ProductoRepo _productorRepo;
 
 
         public ProductosController(ProveedorRepository proveedorRepository,
-            ProductoRepo productorRepo)
+            ProductoRepo productorRepo, IWebHostEnvironment webHostEnvironment)
         {			      
             _proveedorRepository = proveedorRepository;
             _productorRepo = productorRepo;
+            _webHostEnvironment = webHostEnvironment;   
         }
 
         // GET: Productos
@@ -88,8 +89,9 @@ namespace RomaF5.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nombre,Precio,PrecioVenta,PrecioMayorista,Stock,Proveedores")] Producto producto, int[] proveedoresSeleccionados)
-         {
+        public async Task<IActionResult> Create([Bind("Id,Nombre,Precio,Stock,Proveedores,Imagen")] Producto producto, int[] proveedoresSeleccionados)
+        {
+            ModelState.Remove("RutaImagen");//lo saco del modelstate por que si no da error
             if (ModelState.IsValid)
             {
                 foreach (var proveedorId in proveedoresSeleccionados)
@@ -100,14 +102,23 @@ namespace RomaF5.Controllers
                         producto.Proveedores.Add(proveedor);
                     }
                 }
-                await _productorRepo.AddAsync(producto);               
+                producto.CambiarPorcentaje(producto);
+
+                var rutaImagen = Path.Combine(_webHostEnvironment.WebRootPath, "img", producto.Imagen.FileName);
+                using (var stream = new FileStream(rutaImagen, FileMode.Create))
+                {
+                    producto.Imagen.CopyTo(stream);
+                }
+                producto.RutaImagen = $"~/img/{producto.Imagen.FileName}";
+
+                await _productorRepo.AddAsync(producto);
                 return RedirectToAction(nameof(Index));
             }
             var proveedores = await _proveedorRepository.GetAllAsync();
             ViewBag.Proveedores = new SelectList(proveedores, "Id", "Nombre");
             return View(producto);
         }
-   
+
 
 
         [Authorize(Roles = "ADMIN")]

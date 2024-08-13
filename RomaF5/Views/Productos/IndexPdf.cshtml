@@ -1,5 +1,8 @@
 ﻿@using RomaF5.Models.productosViewModels
 @model ProductoViewModel
+@{
+    Layout = null;
+}
 @* sacar provedores agregar color por renglon verde suave, link directo al insta 
     modelo para crear catalogo
     
@@ -8,57 +11,68 @@
 <head>
     <link rel="stylesheet" href="~/css/pdf-styles.css" />
 </head>
-<h1>Lista de Precios "Tres pinos"</h1>
-<h2 style="font-family"> Hernan cel: 3442-647905</h2>
-<p>Sígueme en Instagram: <a href="https://www.instagram.com/trespinos.ok">trespinos.ok</a></p>
+<body>
+    <h1 style="text-align:center">Lista de Precios "Tres pinos"</h1>
+    <h2 style="font-family"> Hernan cel: 3442-647905</h2>
+    <p>Sígueme en Instagram: <a href="https://www.instagram.com/trespinos.ok">trespinos.ok</a></p>
 
-@if (Model.EsMayorista)
-{
-    <div class="table-responsive">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Nombre</th>
-                    <th scope="col">Precio</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var producto in Model.Productos)
-                {
+    @if (Model.EsMayorista)
+    {
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
                     <tr>
-                        <td>@producto.Nombre</td>
-                        <td>@producto.PrecioMayorista</td>
+                        <th style="background-color:azure" scope="col">Cod</th>
+                        <th scope="col">Nombre</th>
+                        <th style="background-color:aquamarine" scope="col">Precio</th>
+                        <th>Imagen</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-    <br />
-    <br />
-}
-else
-{
+                </thead>
+                <tbody>
+                    @foreach (var producto in Model.Productos)
+                    {
+                        <tr>
+                            <td style="background-color:azure">@producto.Id</td>
+                            <td style="background-color:aqua">@producto.Nombre</td>
+                            <td style="background-color:aquamarine">@producto.PrecioMayorista</td>
+                            <td style="background-color:aquamarine"><img src="@Url.Content(producto.RutaImagen)" alt="Imagen de @producto.Nombre" style="max-width: 100px; max-height: 100px;" /></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <br />
+        <br />
+    }
+    else
+    {
 
-    <div class="table-responsive">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Nombre</th>
-                    <th scope="col">Precio</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var producto in Model.Productos)
-                {
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
                     <tr>
-                        <td>@producto.Nombre</td>
-                        <td>@producto.Precio</td>
+                        <th style="background-color:azure" scope="col">Cod</th>
+                        <th scope="col">Nombre</th>
+                        <th style="background-color:aquamarine" scope="col">Precio</th>
+                        <th>Imagen</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-    <br />
-    <br />
-}
+                </thead>
+                <tbody>
+                    @foreach (var producto in Model.Productos)
+                    {
+                        <tr>
+                            <td style="background-color:azure">@producto.Id</td>
+                            <td style="background-color:aqua">@producto.Nombre</td>
+                            <td style="background-color:aquamarine">@producto.Precio</td>
+                            <td style="background-color:aquamarine"><img src="@Url.Content(producto.RutaImagen)" alt="Imagen de @producto.Nombre" style="max-width: 100px; max-height: 100px;" /></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <br />
+        <br />
+    }
+</body>
+
 

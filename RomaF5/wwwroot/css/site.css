@@ -22,3 +22,7 @@ body {
     color: white; /* Cambia este valor al color del texto deseado */
     padding: 20px; /* Agrega espacio interno al footer para mejorar su aspecto */
 }
+.brand_logo{
+    width:15rem;
+    height:auto;
+}

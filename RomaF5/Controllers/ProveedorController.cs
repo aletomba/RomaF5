@@ -60,9 +60,9 @@ namespace RomaF5.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CambiarPrecio(int id, decimal porcentajeConsFinal,decimal porcentajeMayorista )
+        public async Task<IActionResult> CambiarPrecio(int id, decimal precio)
         {
-            if (id <= 0 || porcentajeConsFinal < 0)
+            if (id <= 0 || precio < 0)
             {
                 return BadRequest();
             }
@@ -75,8 +75,8 @@ namespace RomaF5.Controllers
 
             proveedor.Productos = proveedor.Productos.Select(p =>
             {
-                p.PrecioVenta = p.Precio * (1 + (porcentajeConsFinal / 100));
-                p.PrecioMayorista = p.Precio * (1 + (porcentajeMayorista / 100));
+                p.Precio = p.Precio * (1 + (precio / 100));
+                p.CambiarPorcentaje(p);
                 return p;
             }).ToList();
 

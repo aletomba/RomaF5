@@ -83,14 +83,15 @@ namespace RomaF5.Controllers
                 if (ModelState.IsValid)
                 {
                     decimal total = 0;
+                    var cliente = await _clienteRepo.GetByIdAsync(venta.ClienteId);
                     foreach (var ventaProducto in venta.VentasProductos)
                     {
-                        var prod = await _prodRepo.GetAllAsync();
-                        var product = prod.FirstOrDefault(x => x.Id == ventaProducto.ProductoId);
-                        if (product != null && ventaProducto.Cantidad > 0)
+                        var prod = await _prodRepo.GetByIdAsync(ventaProducto.ProductoId);
+                        if (prod != null && ventaProducto.Cantidad > 0)
                         {
-                            total += ventaProducto.Cantidad * product.Precio;
-                            product.DescontarStock(ventaProducto.Cantidad);
+                            decimal precio = cliente.Nombre == "BLANCO" ? prod.PrecioVenta : prod.PrecioMayorista;
+                            total += ventaProducto.Cantidad * precio;
+                            prod.DescontarStock(ventaProducto.Cantidad);
                         }
                     }
                     venta.Total = total;
@@ -102,11 +103,8 @@ namespace RomaF5.Controllers
             }
             catch (Exception ex)
             {
-                
-                ViewBag.StockAlert = ex.Message;             
-                
+                ViewBag.StockAlert = ex.Message;
             }
-          
 
             ViewBag.Clientes = await _clienteRepo.GetAllAsync();
             ViewBag.Productos = await _prodRepo.GetAllAsync();

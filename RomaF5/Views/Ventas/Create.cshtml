@@ -1,4 +1,5 @@
-﻿@model RomaF5.Models.Venta
+﻿
+@model RomaF5.Models.Venta
 
 @{
     ViewData["Title"] = "Create";
@@ -31,7 +32,7 @@
                 <select asp-for="ClienteId" class="form-control">
                     @foreach (var cliente in ViewBag.Clientes)
                     {
-                        <option value="@cliente.Id">@cliente.Nombre</option>
+                        <option value="@cliente.Id" data-cliente-tipo="@cliente.Nombre">@cliente.Nombre</option>
                     }
                 </select>
             </div>
@@ -49,7 +50,7 @@
                     <tbody>
                         @foreach (var producto in productos)
                         {
-                            <tr class="productRow" data-precio="@producto.Precio">
+                            <tr class="productRow" data-precio="@producto.Precio" data-precio-minorista="@producto.PrecioVenta" data-precio-mayorista="@producto.PrecioMayorista">
                                 <td>
                                     <input type="hidden" name="VentasProductos.Index" value="@producto.Id" />
                                     <input type="hidden" name="VentasProductos[@producto.Id].ProductoId" value="@producto.Id" />
@@ -92,4 +93,3 @@
     }
     <script src="~/js/Venta.js"></script>
 }
-

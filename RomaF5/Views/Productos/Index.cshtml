@@ -21,9 +21,6 @@
     <button type="submit" class="btn btn-success">Descargar PDF Minorista</button>
 </form>
 
-@* 
-<a asp-action="DescargarPdfV" value="minorista" class="btn btn-success">Descargar PDFV</a>
-<a asp-action="DescargarPdfM" name="esMayorista" value="true" class="btn btn-success">Descargar PDFM</a> *@
 <br />
 <!-- Formulario de búsqueda -->
 <div class="form-group">
@@ -55,8 +52,12 @@
                 @Html.DisplayNameFor(model => model.First().Stock)
             </th>
             <th>
+                Imagen
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.First().Proveedores)
             </th>
+            
             <th></th>
         </tr>
     </thead>
@@ -78,6 +79,9 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Stock)
+                </td>
+                <td>
+                    <img src="@Url.Content(item.RutaImagen)" alt="Imagen de @item.Nombre" style="max-width: 100px; max-height: 100px;" />
                 </td>
                 <td>
                     <ul>
