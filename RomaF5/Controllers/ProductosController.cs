@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using PagedList;
 using RomaF5.IRepository;
 using RomaF5.Models;
+using System.Drawing.Printing;
 
 namespace RomaF5.Controllers
 {
@@ -40,23 +42,48 @@ namespace RomaF5.Controllers
             if (id == 0)
             {
                 var prodcuto = await _productorRepo.GetProducts();
+                
                 var productosPaginados = prodcuto.ToPagedList(pageNumber, pageSize);
 
                 return View(productosPaginados);
             }
 
-            var proveedor = await _proveedorRepository.GetbyId(id);
+            var proveedor = await _proveedorRepository.GetProductosByProveedorId(id);
             if(proveedor == null)
             {
                 return NotFound();
             }
 
-            var productosXProvPaginados = proveedor.Productos.ToPagedList(pageNumber, pageSize);
+            var productosXProvPaginados = proveedor.ToPagedList(pageNumber, pageSize);
 
             return View(productosXProvPaginados);
          
         }
-       
+        public ActionResult IndexSearch(string searchTerm, int? page)
+        {
+            if (string.IsNullOrEmpty(searchTerm))
+            {
+                return RedirectToAction("Index"); // o return View("Index"); si prefieres mostrar la vista original
+            }
+            int pageSize = 10; // Define el número de elementos por página
+            int pageNumber = page ?? 1;
+
+            // Método que muestra los resultados de la búsqueda
+            var productos = _productorRepo.Buscar(searchTerm);
+            var productosPaginados = productos.ToPagedList(pageNumber, pageSize);
+            return View("Index", productosPaginados);
+        }
+
+        [HttpGet]
+        public ActionResult Buscar(string searchTerm, int? page)
+        {
+            int pageSize = 10; // Define el número de elementos por página
+            int pageNumber = page ?? 1;
+            var productos = _productorRepo.Buscar(searchTerm);
+            var productosPaginados = productos.ToPagedList(pageNumber, pageSize);
+            return Json(productosPaginados);
+        }
+
         [Authorize(Roles ="ADMIN")]
         // GET: Productos/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -89,7 +116,7 @@ namespace RomaF5.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nombre,Precio,Stock,Proveedores,Imagen")] Producto producto, int[] proveedoresSeleccionados)
+        public async Task<IActionResult> Create([Bind("Id,Nombre,Precio,Stock,Proveedores")] Producto producto, int[] proveedoresSeleccionados)
         {
             ModelState.Remove("RutaImagen");//lo saco del modelstate por que si no da error
             if (ModelState.IsValid)
@@ -99,17 +126,27 @@ namespace RomaF5.Controllers
                     var proveedor = await _proveedorRepository.GetByIdAsync(proveedorId);
                     if (proveedor != null)
                     {
-                        producto.Proveedores.Add(proveedor);
+                        var productoProveedor = new ProductoProveedor
+                        {
+                            Producto = producto,
+                            Proveedor = proveedor
+                        };
+                        producto.ProductoProveedores.Add(productoProveedor);            
+                       
                     }
                 }
                 producto.CambiarPorcentaje(producto);
 
-                var rutaImagen = Path.Combine(_webHostEnvironment.WebRootPath, "img", producto.Imagen.FileName);
-                using (var stream = new FileStream(rutaImagen, FileMode.Create))
-                {
-                    producto.Imagen.CopyTo(stream);
-                }
-                producto.RutaImagen = $"~/img/{producto.Imagen.FileName}";
+                //if(producto.RutaImagen != null)
+                //{
+                //    var rutaImagen = Path.Combine(_webHostEnvironment.WebRootPath, "img", producto.Imagen.FileName);
+                //    using (var stream = new FileStream(rutaImagen, FileMode.Create))
+                //    {
+                //        producto.Imagen.CopyTo(stream);
+                //    }
+                //    producto.RutaImagen = $"~/img/{producto.Imagen.FileName}";
+
+                //}               
 
                 await _productorRepo.AddAsync(producto);
                 return RedirectToAction(nameof(Index));
@@ -130,11 +167,13 @@ namespace RomaF5.Controllers
                 return NotFound();
             }
 
-            var producto = await _productorRepo.GetByIdAsync(id);
+            var producto = await _productorRepo.GetById(id);
             if (producto == null)
             {
                 return NotFound();
             }
+            ViewData["Proveedores"] = new SelectList(await _proveedorRepository.GetAllAsync(), "Id", "Nombre");
+            
             return View(producto);
         }
 
@@ -143,20 +182,13 @@ namespace RomaF5.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,Precio,PrecioVenta,PrecioMayorista,Stock")] Producto producto)
+        public async Task<IActionResult> Edit(int id, Producto producto, List<int> proveedoresSeleccionados)
         {
-            if (id != producto.Id)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                  
-					await _productorRepo.Update(producto);
-                   
+                    await _productorRepo.UpdateProd(producto,proveedoresSeleccionados);
                 }
                 catch (Exception)
                 {
@@ -164,8 +196,10 @@ namespace RomaF5.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
             return View(producto);
         }
+
         [Authorize(Roles = "ADMIN")]
         // GET: Productos/Delete/5
         public async Task<IActionResult> Delete(int? id)

@@ -4,7 +4,7 @@
 @{
     ViewData["Title"] = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    var productos = (List<Producto>)ViewBag.Productos;
+    var productos = (List<Producto>)ViewBag.Productos;  
 }
 
 <h4 style="text-align:center">Venta</h4>
@@ -19,20 +19,40 @@
             <input type="hidden" id="total" name="Total" value="" />
             <input type="hidden" id="productos" name="VentasProductos" value="" />
         </div>
+        @if (!string.IsNullOrEmpty(ViewBag.StockAlert))
+        {
+            <div class="alert alert-success">
+                @ViewBag.StockAlert
+            </div>
+        }
     </div>
     <div class="col-md-6">
-        <form asp-action="Create">
+        <form asp-action="Create" asp-controller="Ventas">
             <div class="form-group">
                 <label asp-for="Fecha" class="control-label"></label>
                 <input asp-for="Fecha" class="form-control" />
                 <span asp-validation-for="Fecha" class="text-danger"></span>
             </div>
+            <div class="form-group" id="NumeroDeCuotas" style="display:none;">
+                <label asp-for="NumeroCuotas" class="control-label"></label>
+                <input asp-for="NumeroCuotas" class="form-control" />
+                <span asp-validation-for="NumeroCuotas" class="text-danger"></span>
+            </div>
+            <div class="form-group" id="_Cuotas"></div> 
             <div class="form-group">
                 <label>Cliente:</label>
                 <select asp-for="ClienteId" class="form-control">
                     @foreach (var cliente in ViewBag.Clientes)
                     {
                         <option value="@cliente.Id" data-cliente-tipo="@cliente.Nombre">@cliente.Nombre</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <select asp-for="TipoPago">
+                    @foreach (var tipoDePago in ViewBag.TipoDePago)
+                    {
+                        <option value="@tipoDePago">@tipoDePago</option>
                     }
                 </select>
             </div>
@@ -44,6 +64,7 @@
                     <thead>
                         <tr>
                             <th>Producto</th>
+                            
                             <th>Cantidad</th>
                         </tr>
                     </thead>
@@ -54,11 +75,13 @@
                                 <td>
                                     <input type="hidden" name="VentasProductos.Index" value="@producto.Id" />
                                     <input type="hidden" name="VentasProductos[@producto.Id].ProductoId" value="@producto.Id" />
-                                    <label>@producto.Nombre</label>
+                                    <label>@producto.Nombre</label>                                    
+                                    
                                 </td>
+                                
                                 <td>
                                     <select name="VentasProductos[@producto.Id].Cantidad" class="form-control">
-                                        @for (int i = 0; i <= 10; i++)
+                                        @for (int i = 0; i <= 1000; i++)
                                         {
                                             <option value="@i" selected="@(i == 0)">@(i.ToString())</option>
                                         }
@@ -69,7 +92,6 @@
                     </tbody>
                 </table>
             </div>
-
             <div class="text-center">
                 <button type="submit" class="btn btn-primary">Guardar</button>
             </div>
@@ -77,12 +99,7 @@
     </div>
 </div>
 
-@if (!string.IsNullOrEmpty(ViewBag.StockAlert))
-{
-    <div class="alert alert-success">
-        @ViewBag.StockAlert
-    </div>
-}
+
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
@@ -92,4 +109,28 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     <script src="~/js/Venta.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#TipoPago').change(function () {
+                var tipoPago = $(this).val();
+                if (tipoPago == 'Cuotas') {
+                    $.ajax({
+                        url: '/Ventas/_Cuotas',
+                        type: 'GET',
+                        success: function (partialView) {
+                            $('#_Cuotas').html(partialView);
+                            $('#_Cuotas').show();
+                        }
+                    });
+                    $('#NumeroDeCuotas').show();
+                } else {
+                    $('#_Cuotas').hide();
+                    $('#NumeroDeCuotas').hide();
+                }
+            });
+        });
+    </script>
+
+ 
+  
 }

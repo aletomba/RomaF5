@@ -3,6 +3,10 @@
 body {
     font-family: Arial, sans-serif;
 }
+.centro {
+    display: block;
+    margin: 0 auto;
+}
 table tbody tr td {
     background-color: #f2f2f2; /* o cualquier otro color que desees */
 }

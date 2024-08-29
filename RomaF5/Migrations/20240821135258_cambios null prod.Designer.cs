@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RomaF5.Data;
 
@@ -10,9 +11,10 @@ using RomaF5.Data;
 namespace RomaF5.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240821135258_cambios null prod")]
+    partial class cambiosnullprod
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.27");
@@ -250,37 +252,6 @@ namespace RomaF5.Migrations
                     b.ToTable("Clientes");
                 });
 
-            modelBuilder.Entity("RomaF5.Models.Cuota", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime?>("FechaPago")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("FechaVencimiento")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("Monto")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Observaciones")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("Pagada")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("VentaId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("VentaId");
-
-                    b.ToTable("Cuota");
-                });
-
             modelBuilder.Entity("RomaF5.Models.Producto", b =>
                 {
                     b.Property<int>("Id")
@@ -390,26 +361,8 @@ namespace RomaF5.Migrations
                     b.Property<int>("ClienteId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("CuotasPagas")
-                        .HasColumnType("INTEGER");
-
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("FechaPago")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal?>("MontoPagado")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("NumeroCuotas")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Observaciones")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool?>("Pagado")
-                        .HasColumnType("INTEGER");
 
                     b.Property<int?>("TipoPago")
                         .HasColumnType("INTEGER");
@@ -491,17 +444,6 @@ namespace RomaF5.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("RomaF5.Models.Cuota", b =>
-                {
-                    b.HasOne("RomaF5.Models.Venta", "Venta")
-                        .WithMany("Cuotas")
-                        .HasForeignKey("VentaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Venta");
                 });
 
             modelBuilder.Entity("RomaF5.Models.ProductoProveedor", b =>
@@ -594,8 +536,6 @@ namespace RomaF5.Migrations
 
             modelBuilder.Entity("RomaF5.Models.Venta", b =>
                 {
-                    b.Navigation("Cuotas");
-
                     b.Navigation("VentasProductos");
                 });
 #pragma warning restore 612, 618

@@ -7,19 +7,19 @@ namespace RomaF5.Models
 	{
         public Producto()
         {
-            Proveedores = new List<Proveedor>();
+            ProductoProveedores = new List<ProductoProveedor>();
         }
         public int Id { get; set; }
 		public string? Nombre { get; set; }
-		public decimal Precio { get; set; }
-        public decimal PrecioVenta { get; set; }
-        public decimal PrecioMayorista { get; set; }
-        public int Stock { get; set; }
+		public decimal? Precio { get; set; }
+        public decimal? PrecioVenta { get; set; }
+        public decimal? PrecioMayorista { get; set; }
+        public int? Stock { get; set; }
 		public List<VentaProducto>? VentasProductos { get; set; } // Relación muchos a muchos con VentaProducto
-        public List<Proveedor>? Proveedores { get; set; }
-        public string RutaImagen { get; set; }
+        public List<ProductoProveedor>? ProductoProveedores { get; set; }
+        public string? RutaImagen { get; set; }
         [NotMapped]
-        public IFormFile Imagen { get; set; }             
+        public IFormFile? Imagen { get; set; }             
         [NotMapped]
         public int[]? ProveedoresSeleccionados { get; set; }
         
@@ -39,8 +39,11 @@ namespace RomaF5.Models
 
         public void CambiarPorcentaje(Producto producto)
         {
-            producto.PrecioMayorista = producto.Precio + (producto.Precio * 55 / 100);
-            producto.PrecioVenta = producto.PrecioMayorista + (producto.PrecioMayorista * 70 / 100);
+            if (producto.Precio > 0)
+            {
+                producto.PrecioMayorista = producto.Precio + (producto.Precio * 55 / 100);
+                producto.PrecioVenta = producto.PrecioMayorista + (producto.PrecioMayorista * 70 / 100);
+            }            
         }
     }   
 

@@ -5,11 +5,11 @@
         public int Id { get; set; }
         public string? Nombre { get; set; }
         public string? NumeroCelular { get; set; }   
-        public List<Producto> Productos { get; set; }
+        public List<ProductoProveedor> ProductoProveedores { get; set; }
 
         public Proveedor()
         {
-            Productos = new List<Producto>();
+            ProductoProveedores = new List<ProductoProveedor>();
         }
     }
 }

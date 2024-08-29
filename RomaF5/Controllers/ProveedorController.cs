@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RomaF5.IRepository;
 using RomaF5.Models;
 
@@ -9,10 +10,12 @@ namespace RomaF5.Controllers
     public class ProveedorController : Controller
     {
         private readonly ProveedorRepository _repository;
+        private readonly ProductoRepo _productoRepo;    
 
-        public ProveedorController(ProveedorRepository repository)
+        public ProveedorController(ProveedorRepository repository, ProductoRepo productoRepo)
         {
-            _repository = repository;    
+            _repository = repository;
+            _productoRepo = productoRepo;   
         }
         [Authorize(Roles = "ADMIN")]
         [HttpGet]
@@ -60,30 +63,37 @@ namespace RomaF5.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CambiarPrecio(int id, decimal precio)
+        public async Task<IActionResult> CambiarPrecio(int id, decimal precioCompra, decimal precioVentaMin, decimal precioVentamay)
         {
-            if (id <= 0 || precio < 0)
+            //var proveedor = await _repository.GetbyId(id);
+
+            // Obtén los productos asociados a ese proveedor
+            var productos = await _repository.GetProductosByProveedorId(id);
+
+            // Itera sobre los productos y actualiza el precio de cada uno
+            foreach (var producto in productos)
             {
-                return BadRequest();
+                if(precioCompra > 0)
+                {
+                    producto.Precio = producto.Precio * (1 + precioCompra / 100);
+                }
+                if(precioVentaMin > 0)
+                {
+                    producto.PrecioVenta = producto.PrecioVenta * (1 + precioVentaMin / 100);
+                }
+                if(precioVentamay > 0)
+                {
+                    producto.PrecioMayorista = producto.PrecioMayorista * (1 + precioVentamay / 100);
+                }               
+
             }
 
-            var proveedor = await _repository.GetbyId(id);
-            if (proveedor == null)
-            {
-                return NotFound();
-            }
-
-            proveedor.Productos = proveedor.Productos.Select(p =>
-            {
-                p.Precio = p.Precio * (1 + (precio / 100));
-                p.CambiarPorcentaje(p);
-                return p;
-            }).ToList();
-
-            await _repository.Update(proveedor);
-
+            // Guarda los cambios en la base de datos
+            await _productoRepo.UpdateForProv(productos);
             return RedirectToAction(nameof(Index));
         }
+            
+        
 
         [Authorize(Roles = "ADMIN")]
         // GET: Productos/Delete/5
@@ -116,6 +126,51 @@ namespace RomaF5.Controllers
             }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        [Authorize(Roles = "ADMIN")]
+        // GET: Clientes/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var cliente = await _repository.GetByIdAsync(id);
+            if (cliente == null)
+            {
+                return NotFound();
+            }
+            return View(cliente);
+        }
+
+        // POST: Clientes/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, Proveedor proveedor)
+        {
+            if (id != proveedor.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await _repository.Update(proveedor);
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    return NotFound();
+
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(proveedor);
         }
     }
 }

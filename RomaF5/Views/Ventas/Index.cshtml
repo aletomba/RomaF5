@@ -38,7 +38,8 @@
         <tr>
             <th>Fecha</th>
             <th>Cliente</th>
-            <th>Productos Vendidos</th>
+            <th>Tipo de Pago</th>
+            <th>Productos Vendidos</th>            
             <th>Total</th>
             <th>Acciones</th>
         </tr>
@@ -49,11 +50,13 @@
             <tr data-fecha="@venta.Fecha.ToString("yyyy-MM-dd")">
                 <td>@venta.Fecha</td>
                 <td>@venta.Cliente.Nombre</td>
+                <td class="@(venta.NumeroCuotas > 0 ? "color-verde" : "")">@venta.TipoPago.Value</td>
+                @* <td @if(venta.NumeroCuotas>0){}>@venta.TipoPago.Value</td> *@
                 <td>
                     <ul>
                         @foreach (var ventaProducto in venta.VentasProductos)
                         {
-                            <li>@ventaProducto.Producto.Nombre</li>
+                            <li>@ventaProducto.Producto.Nombre - @ventaProducto.Cantidad</li>
                         }
                     </ul>
                 </td>
@@ -61,7 +64,11 @@
                 <td>
                     <a asp-action="Edit" asp-route-id="@venta.Id">Editar</a> |
                     <a asp-action="Details" asp-route-id="@venta.Id">Detalles</a> |
-                    <a asp-action="Delete" asp-route-id="@venta.Id">Borrar</a>
+                    <a asp-action="Delete" asp-route-id="@venta.Id">Borrar</a> 
+                    @if (venta.NumeroCuotas > 0)
+                    {
+                        <a asp-action="PagarCuota" asp-route-id="@venta.Id">Pagar Cuota</a>
+                    }                    
                 </td>
             </tr>
         }

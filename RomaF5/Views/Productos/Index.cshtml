@@ -22,12 +22,12 @@
 </form>
 
 <br />
-<!-- Formulario de búsqueda -->
 <div class="form-group">
-    <input type="text" id="searchInput" class="form-control" placeholder="Buscar producto..." />
-    <button type="button" class="btn btn-primary mt-2" onclick="filtrarProductos()">Buscar</button>
+    <form action="@Url.Action("IndexSearch", "Productos")" method="get">
+        <input type="text" class="form-control" name="searchTerm" />
+        <input class="btn btn-primary mt-2" type="submit" value="Buscar" style="display: inline-block" />
+    </form>
 </div>
-
 
 <div class="pagination-container">
     <partial name="_Paginacion" model="Model" />
@@ -39,11 +39,15 @@
             <th>
                 @Html.DisplayNameFor(model => model.First().Nombre)
             </th>
+            @if (User.IsInRole("ADMIN"))
+            {
+                <th>
+                  PrecioCompra@* @Html.DisplayNameFor(model => model.First().Precio) *@
+                </th>
+            }
+            
             <th>
-                @Html.DisplayNameFor(model => model.First().Precio)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.First().PrecioVenta)
+                PrecioMinorista@* @Html.DisplayNameFor(model => model.First().PrecioVenta) *@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.First().PrecioMayorista)
@@ -51,11 +55,11 @@
             <th>
                 @Html.DisplayNameFor(model => model.First().Stock)
             </th>
-            <th>
+            @* <th>
                 Imagen
-            </th>
+            </th> *@
             <th>
-                @Html.DisplayNameFor(model => model.First().Proveedores)
+                Proveedor
             </th>
             
             <th></th>
@@ -68,9 +72,13 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Nombre)
                 </td>
-                <td>
+                @if (User.IsInRole("ADMIN"))
+                {
+                    <td>
                     @Html.DisplayFor(modelItem => item.Precio)
-                </td>
+                    </td>
+                }
+                
                 <td>
                     @Html.DisplayFor(modelItem => item.PrecioVenta)
                 </td>
@@ -79,15 +87,15 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Stock)
-                </td>
-                <td>
-                    <img src="@Url.Content(item.RutaImagen)" alt="Imagen de @item.Nombre" style="max-width: 100px; max-height: 100px;" />
-                </td>
+                </td>                
+                @* <td class="imagen-container">
+                    <img src="@Url.Content(item.RutaImagen)" alt="Imagen de @item.Nombre" class="imagen-responsive" />
+                </td> *@
                 <td>
                     <ul>
-                        @foreach (var proveedor in item.Proveedores)
+                        @foreach (var proveedor in item.ProductoProveedores)
                         {
-                            <li>@proveedor.Nombre</li>
+                            <li>@proveedor.Proveedor.Nombre</li>
                         }
                     </ul>
                 </td>
@@ -102,27 +110,5 @@
 </table>
 
 
-@section Scripts {
-    <script>
-        function filtrarProductos() {
-            var input, filter, table, tr, td, i, txtValue;
-            input = document.getElementById("searchInput");
-            filter = input.value.toUpperCase();
-            table = document.getElementById("productosTable");
-            tr = table.getElementsByTagName("tr");
 
-            for (i = 0; i < tr.length; i++) {
-                td = tr[i].getElementsByTagName("td")[0]; // 0 representa la columna de Nombre del producto
-                if (td) {
-                    txtValue = td.textContent || td.innerText;
-                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
-                }
-            }
-        }
-    </script>
-}
 

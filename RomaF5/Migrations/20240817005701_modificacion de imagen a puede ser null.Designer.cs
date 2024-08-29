@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RomaF5.Data;
 
@@ -10,9 +11,10 @@ using RomaF5.Data;
 namespace RomaF5.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240817005701_modificacion de imagen a puede ser null")]
+    partial class modificaciondeimagenapuedesernull
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.27");
@@ -213,6 +215,21 @@ namespace RomaF5.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ProductoProveedor", b =>
+                {
+                    b.Property<int>("ProductosId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ProveedoresId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("ProductosId", "ProveedoresId");
+
+                    b.HasIndex("ProveedoresId");
+
+                    b.ToTable("ProductoProveedor");
+                });
+
             modelBuilder.Entity("RomaF5.Models.Cancha", b =>
                 {
                     b.Property<int>("Id")
@@ -250,37 +267,6 @@ namespace RomaF5.Migrations
                     b.ToTable("Clientes");
                 });
 
-            modelBuilder.Entity("RomaF5.Models.Cuota", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime?>("FechaPago")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("FechaVencimiento")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("Monto")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Observaciones")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("Pagada")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("VentaId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("VentaId");
-
-                    b.ToTable("Cuota");
-                });
-
             modelBuilder.Entity("RomaF5.Models.Producto", b =>
                 {
                     b.Property<int>("Id")
@@ -290,42 +276,24 @@ namespace RomaF5.Migrations
                     b.Property<string>("Nombre")
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal?>("Precio")
+                    b.Property<decimal>("Precio")
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal?>("PrecioMayorista")
+                    b.Property<decimal>("PrecioMayorista")
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal?>("PrecioVenta")
+                    b.Property<decimal>("PrecioVenta")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("RutaImagen")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("Stock")
+                    b.Property<int>("Stock")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.ToTable("Productos");
-                });
-
-            modelBuilder.Entity("RomaF5.Models.ProductoProveedor", b =>
-                {
-                    b.Property<int>("ProveedorId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ProductoId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<decimal?>("Precio")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("ProveedorId", "ProductoId");
-
-                    b.HasIndex("ProductoId");
-
-                    b.ToTable("ProductoProveedores");
                 });
 
             modelBuilder.Entity("RomaF5.Models.Proveedor", b =>
@@ -390,28 +358,10 @@ namespace RomaF5.Migrations
                     b.Property<int>("ClienteId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("CuotasPagas")
-                        .HasColumnType("INTEGER");
-
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime?>("FechaPago")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal?>("MontoPagado")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("NumeroCuotas")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Observaciones")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool?>("Pagado")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("TipoPago")
+                    b.Property<int>("TipoPago")
                         .HasColumnType("INTEGER");
 
                     b.Property<decimal?>("Total")
@@ -493,34 +443,19 @@ namespace RomaF5.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("RomaF5.Models.Cuota", b =>
+            modelBuilder.Entity("ProductoProveedor", b =>
                 {
-                    b.HasOne("RomaF5.Models.Venta", "Venta")
-                        .WithMany("Cuotas")
-                        .HasForeignKey("VentaId")
+                    b.HasOne("RomaF5.Models.Producto", null)
+                        .WithMany()
+                        .HasForeignKey("ProductosId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Venta");
-                });
-
-            modelBuilder.Entity("RomaF5.Models.ProductoProveedor", b =>
-                {
-                    b.HasOne("RomaF5.Models.Producto", "Producto")
-                        .WithMany("ProductoProveedores")
-                        .HasForeignKey("ProductoId")
+                    b.HasOne("RomaF5.Models.Proveedor", null)
+                        .WithMany()
+                        .HasForeignKey("ProveedoresId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("RomaF5.Models.Proveedor", "Proveedor")
-                        .WithMany("ProductoProveedores")
-                        .HasForeignKey("ProveedorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Producto");
-
-                    b.Navigation("Proveedor");
                 });
 
             modelBuilder.Entity("RomaF5.Models.Turno", b =>
@@ -582,20 +517,11 @@ namespace RomaF5.Migrations
 
             modelBuilder.Entity("RomaF5.Models.Producto", b =>
                 {
-                    b.Navigation("ProductoProveedores");
-
                     b.Navigation("VentasProductos");
-                });
-
-            modelBuilder.Entity("RomaF5.Models.Proveedor", b =>
-                {
-                    b.Navigation("ProductoProveedores");
                 });
 
             modelBuilder.Entity("RomaF5.Models.Venta", b =>
                 {
-                    b.Navigation("Cuotas");
-
                     b.Navigation("VentasProductos");
                 });
 #pragma warning restore 612, 618

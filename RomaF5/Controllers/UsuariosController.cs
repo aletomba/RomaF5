@@ -3,11 +3,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol.Core.Types;
+using RomaF5.IRepository;
 using RomaF5.Models.Dtos;
+using System.Data;
 
 namespace RomaF5.Controllers
 {
-    //[Authorize(Roles = "ADMIN")]
+    [Authorize(Roles = "ADMIN")]
     public class UsuariosController : Controller
     {
         private readonly UserManager<IdentityUser> _userManager;
@@ -174,18 +177,40 @@ namespace RomaF5.Controllers
         }      
 
         // GET: UsuariosController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task <ActionResult> Delete(string id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var producto = await _userManager.FindByIdAsync(id);
+            if (producto == null)
+            {
+                return NotFound();
+            }
+            var model = new CrearUsuarioDto
+            {
+                Id = producto.Id,
+                Email = producto.Email,
+                Password = producto.PasswordHash
+            };
+
+            return View(model);
         }
 
         // POST: UsuariosController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task <ActionResult> DeleteConfirm(string id)
         {
             try
             {
+                var usuario = await _userManager.FindByIdAsync(id);
+                if (usuario != null)
+                {
+                    await _userManager.DeleteAsync(usuario);
+                }
                 return RedirectToAction(nameof(Index));
             }
             catch

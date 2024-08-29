@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RomaF5.Data;
 
@@ -10,9 +11,10 @@ using RomaF5.Data;
 namespace RomaF5.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240821221810_sistemas de cuotas")]
+    partial class sistemasdecuotas
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.27");
@@ -390,16 +392,13 @@ namespace RomaF5.Migrations
                     b.Property<int>("ClienteId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("CuotasPagas")
-                        .HasColumnType("INTEGER");
-
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("FechaPago")
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal?>("MontoPagado")
+                    b.Property<decimal?>("MontoCuota")
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("NumeroCuotas")

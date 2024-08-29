@@ -13,6 +13,7 @@
 </head>
 <body>
     <h1 style="text-align:center">Lista de Precios "Tres pinos"</h1>
+    <img class="centro" src="~/img/imagen trespinos.jpg"/>
     <h2 style="font-family"> Hernan cel: 3442-647905</h2>
     <p>Sígueme en Instagram: <a href="https://www.instagram.com/trespinos.ok">trespinos.ok</a></p>
 
@@ -24,8 +25,7 @@
                     <tr>
                         <th style="background-color:azure" scope="col">Cod</th>
                         <th scope="col">Nombre</th>
-                        <th style="background-color:aquamarine" scope="col">Precio</th>
-                        <th>Imagen</th>
+                        <th style="background-color:aquamarine" scope="col">Precio</th>                       
                     </tr>
                 </thead>
                 <tbody>
@@ -35,7 +35,7 @@
                             <td style="background-color:azure">@producto.Id</td>
                             <td style="background-color:aqua">@producto.Nombre</td>
                             <td style="background-color:aquamarine">@producto.PrecioMayorista</td>
-                            <td style="background-color:aquamarine"><img src="@Url.Content(producto.RutaImagen)" alt="Imagen de @producto.Nombre" style="max-width: 100px; max-height: 100px;" /></td>
+                           
                         </tr>
                     }
                 </tbody>
@@ -54,7 +54,7 @@
                         <th style="background-color:azure" scope="col">Cod</th>
                         <th scope="col">Nombre</th>
                         <th style="background-color:aquamarine" scope="col">Precio</th>
-                        <th>Imagen</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
@@ -63,8 +63,8 @@
                         <tr>
                             <td style="background-color:azure">@producto.Id</td>
                             <td style="background-color:aqua">@producto.Nombre</td>
-                            <td style="background-color:aquamarine">@producto.Precio</td>
-                            <td style="background-color:aquamarine"><img src="@Url.Content(producto.RutaImagen)" alt="Imagen de @producto.Nombre" style="max-width: 100px; max-height: 100px;" /></td>
+                            <td style="background-color:aquamarine">@producto.PrecioVenta</td>
+                            
                         </tr>
                     }
                 </tbody>

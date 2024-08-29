@@ -1,13 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PagedList;
 using RomaF5.IRepository;
 using RomaF5.Models;
-using System.Text.Json.Serialization;
-using System.Text.Json;
+
 
 namespace RomaF5.Controllers
 {
@@ -68,33 +66,59 @@ namespace RomaF5.Controllers
         // GET: Ventas/Create
         public async Task <IActionResult> Create()
         {
+            var tipoDePagos = Enum.GetValues(typeof(TipoPago)).Cast<TipoPago>().ToList();
+            var venta = new Venta { TipoPago = TipoPago.Efectivo };
             ViewBag.Clientes = await _clienteRepo.GetAllAsync(); 
             ViewBag.Productos = await _prodRepo.GetAllAsync();
-            return View();
+            ViewBag.TipoDePago = tipoDePagos;   
+            return View(venta);
         }
 
         // POST: Ventas/Create       
-        [HttpPost]
+        [HttpPost]       
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Venta venta)
+        public async Task<IActionResult> Create(Venta venta, Cuota cuota)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    decimal total = 0;
-                    var cliente = await _clienteRepo.GetByIdAsync(venta.ClienteId);
-                    foreach (var ventaProducto in venta.VentasProductos)
+                    if (venta.NumeroCuotas > 0)
                     {
-                        var prod = await _prodRepo.GetByIdAsync(ventaProducto.ProductoId);
-                        if (prod != null && ventaProducto.Cantidad > 0)
+                        cuota.Pagada = true;
+                        venta.Cuotas.Add(cuota);
+                        
+                       
+                        decimal? total = 0;
+                        var cliente = await _clienteRepo.GetByIdAsync(venta.ClienteId);
+                        foreach (var ventaProducto in venta.VentasProductos)
                         {
-                            decimal precio = cliente.Nombre == "BLANCO" ? prod.PrecioVenta : prod.PrecioMayorista;
-                            total += ventaProducto.Cantidad * precio;
-                            prod.DescontarStock(ventaProducto.Cantidad);
+                            var prod = await _prodRepo.GetByIdAsync(ventaProducto.ProductoId);
+                            if (prod != null && ventaProducto.Cantidad > 0)
+                            {
+                                decimal? precio = cliente.Nombre == "Minorista" ? prod.PrecioVenta : prod.PrecioMayorista;
+                                total += ventaProducto.Cantidad * precio;                               
+                            }
                         }
+                        venta.Total = total;
+                        venta.MontoPagado = cuota.Monto;
                     }
-                    venta.Total = total;
+                    else
+                    {
+                        decimal? total = 0;
+                        var cliente = await _clienteRepo.GetByIdAsync(venta.ClienteId);
+                        foreach (var ventaProducto in venta.VentasProductos)
+                        {
+                            var prod = await _prodRepo.GetByIdAsync(ventaProducto.ProductoId);
+                            if (prod != null && ventaProducto.Cantidad > 0)
+                            {
+                                decimal? precio = cliente.Nombre == "Minorista" ? prod.PrecioVenta : prod.PrecioMayorista;
+                                total += ventaProducto.Cantidad * precio;
+                                prod.DescontarStock(ventaProducto.Cantidad);
+                            }
+                        }
+                        venta.Total = total;
+                    }                 
 
                     await _ventaRepository.AddAsync(venta);
 
@@ -106,9 +130,12 @@ namespace RomaF5.Controllers
                 ViewBag.StockAlert = ex.Message;
             }
 
+            var tipoDePagos = Enum.GetValues(typeof(TipoPago)).Cast<TipoPago>().ToList();
+            var pago = new Venta { TipoPago = TipoPago.Efectivo };
             ViewBag.Clientes = await _clienteRepo.GetAllAsync();
             ViewBag.Productos = await _prodRepo.GetAllAsync();
-            return View(venta);
+            ViewBag.TipoDePago = tipoDePagos;
+            return View(pago);
         }
 
 
@@ -126,7 +153,8 @@ namespace RomaF5.Controllers
             {
                 return NotFound();
             }
-            ViewData["ClienteId"] = new SelectList(await _clienteRepo.GetAllAsync(), "Id", "Id", venta.ClienteId);
+            ViewData["ClienteNombre"] = new SelectList(await _clienteRepo.GetAllAsync(), "Id", "Nombre", venta.Cliente.Nombre);
+            ViewData["ProductoNombre"] = new SelectList(await _prodRepo.GetAllAsync(), "Id", "Nombre", venta.VentasProductos.FirstOrDefault().Producto.Nombre);
             return View(venta);
         }
 
@@ -152,7 +180,7 @@ namespace RomaF5.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClienteId"] = new SelectList(await _clienteRepo.GetAllAsync(), "Id", "Id", venta.ClienteId);
+            ViewData["ClienteNombre"] = new SelectList(await _clienteRepo.GetAllAsync(), "Id", "Nombre", venta.Cliente.Nombre);
             return View(venta);
         }
 
@@ -198,6 +226,48 @@ namespace RomaF5.Controllers
             return View("Index", ventas);
         }
 
+        [HttpGet]
+        public IActionResult _Cuotas()
+        {         
+            return PartialView("_Cuotas");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> PagarCuota(int id)
+        {
+            // Lógica para pagar la cuota
+            var venta = await _ventaRepository.GetByIdAsync(id);            
+            venta.CuotasPagas = venta.Cuotas.Count();
+
+            var cliente = await _clienteRepo.GetAllAsync();
+            var clienteVenta = cliente.Where(x => x.Id == venta.ClienteId).ToList();
+
+            var producto = await _prodRepo.GetAllAsync();         
+            ViewData["ClienteNombre"] = new SelectList(clienteVenta, "Id", "Nombre");
+            ViewBag.ProductosVenta = venta.VentasProductos.Select(vp => vp.Producto.Nombre).ToList();
+            return View(venta);
+        }
+        [HttpPost]
+        public async Task<IActionResult> PagarCuota(int id, decimal monto)
+        {
+            // Lógica para pagar la cuota
+            try
+            {                
+                var resultado = await _ventaRepository.PagarCuota(id, monto);
+                ViewBag.Mensaje = resultado switch
+                {
+                    // Cuotas pendientes
+                    1 => "Le quedan cuotas por pagar",
+                    // Cuotas pagadas
+                    3 => "Has terminado de pagar las cuotas",
+               
+                    
+                };
+            }
+            catch (Exception ex) { }
+           
+            return RedirectToAction("Index");
+        }
 
     }
 }

@@ -13,6 +13,22 @@ html {
   min-height: 100%;
 }
 
+.imagen-container {
+    width: 100%; /* Ancho del contenedor */
+    height: auto; /* Alto del contenedor */
+    margin: auto; /* Centrar horizontalmente */
+}
+
+.imagen-responsive {
+    max-width: 100%; /* Ancho máximo de la imagen */
+    height: auto; /* Alto de la imagen */
+    object-fit: cover; /* Ajustar la imagen al contenedor */
+    border-radius: 10px; /* Borde redondeado (opcional) */
+}
+.color-verde {
+    color: red; /* o cualquier otro color que desees */
+}
+
 body {
     margin-bottom: 60px;
     background-color:beige; /* Cambia este valor al color deseado */
@@ -25,4 +41,40 @@ body {
 .brand_logo{
     width:15rem;
     height:auto;
+}
+@media print {
+    header {
+        display: none;
+    }
+
+    nav {
+        display: none;
+    }
+    /* Oculta los botones */
+    a[href*="Edit"] {
+        display: none;
+    }
+
+    a[href*="Index"] {
+        display: none;
+    }
+
+    button {
+        display: none;
+    }
+    /* Oculta el layout */
+    h1 {
+        display: none;
+    }
+
+    hr {
+        display: none;
+    }
+    /* Oculta el modelo */
+    @* {
+        display: none;
+    }
+    [href*="Logout"] {
+        display: none;
+    }
 }
