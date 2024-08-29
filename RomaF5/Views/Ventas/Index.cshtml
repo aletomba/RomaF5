@@ -6,28 +6,40 @@
     var paginatedList = ViewBag.PaginatedList;
 }
 
-<h1 style="text-align:center"> VENTAS</h1>
+<h1 style="text-align:center">VENTAS</h1>
 <p>
     <a asp-action="Create">Crear Venta</a>
 </p>
-<div class="form-group row">
-    <label for="fechaFiltro" class="col-sm-3 col-form-label font-family-sans-serif"></label>
-    <div class="col-sm-6">
-        <input type="date" id="fechaFiltro" class="form-control font-family-monospace" />
-    </div>
-    <div class="col-sm-3">
-        <button id="btnFiltrar" class="btn btn-primary font-family-serif">Filtrar</button>
-        <button id="btnLimpiarFiltro" class="btn btn-secondary font-family-cursive">Limpiar filtro</button>
-    </div>
-</div>
 
+<form method="get" asp-action="Index" id="formFiltro">
+    <div class="form-group row">
+        <label for="fechaFiltro" class="col-sm-3 col-form-label font-family-sans-serif text-sm-end">Fecha de filtro:</label>
+        <div class="col-sm-9">
+            <div class="row">
+                <div class="col">
+                    <input type="date" id="fechaFiltro" name="fechaFiltro" class="form-control font-family-monospace" />
+                </div>
+                <div class="col">
+                    <button type="submit" class="btn btn-primary">Filtrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<div id="totalDia" style="text-align: right; margin-top: 20px; font-weight: bold;"></div>
+<div class="pagination-container">
+    <partial name="_Paginacion" model="Model" />
+</div>
 
 <table class="table" id="tablaTurnos">
     <thead>
         <tr>
             <th>Fecha</th>
             <th>Cliente</th>
-            <th>Productos Vendidos</th>
+            <th>Tipo de Pago</th>
+            <th>Productos Vendidos</th>            
             <th>Total</th>
             <th>Acciones</th>
         </tr>
@@ -38,32 +50,28 @@
             <tr data-fecha="@venta.Fecha.ToString("yyyy-MM-dd")">
                 <td>@venta.Fecha</td>
                 <td>@venta.Cliente.Nombre</td>
+                <td class="@(venta.NumeroCuotas > 0 ? "color-verde" : "")">@venta.TipoPago.Value</td>
+                @* <td @if(venta.NumeroCuotas>0){}>@venta.TipoPago.Value</td> *@
                 <td>
                     <ul>
                         @foreach (var ventaProducto in venta.VentasProductos)
                         {
-                            <li>@ventaProducto.Producto.Nombre</li>
+                            <li>@ventaProducto.Producto.Nombre - @ventaProducto.Cantidad</li>
                         }
                     </ul>
                 </td>
                 <td>@venta.Total</td>
                 <td>
-                                   
                     <a asp-action="Edit" asp-route-id="@venta.Id">Editar</a> |
                     <a asp-action="Details" asp-route-id="@venta.Id">Detalles</a> |
-                    <a asp-action="Delete" asp-route-id="@venta.Id">Borrar</a>
-                
+                    <a asp-action="Delete" asp-route-id="@venta.Id">Borrar</a> 
+                    @if (venta.NumeroCuotas > 0)
+                    {
+                        <a asp-action="PagarCuota" asp-route-id="@venta.Id">Pagar Cuota</a>
+                    }                    
                 </td>
             </tr>
         }
     </tbody>
 </table>
-<div id="totalDia" style="text-align: right; margin-top: 20px; font-weight: bold;"></div>
-<div class="pagination-container">
-    <partial name="_Paginacion" model="Model" />
-</div>
-
-@section Scripts {
-    <script src="~/js/filtroTurnos.js" defer></script>
-}
 

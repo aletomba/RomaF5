@@ -20,10 +20,15 @@
                 <span asp-validation-for="Fecha" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ClienteId" class="control-label"></label>
-                <select asp-for="ClienteId" class="form-control" asp-items="ViewBag.ClienteId"></select>
-                <span asp-validation-for="ClienteId" class="text-danger"></span>
+                <label asp-for="Cliente.Nombre" class="control-label"></label>
+                <select asp-for="Cliente.Nombre" class="form-control" asp-items="ViewBag.ClienteNombre"></select>
+                <span asp-validation-for="Cliente.Nombre" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <label asp-for="VentasProductos.FirstOrDefault().Producto" class="control-label"></label>
+                <select asp-for="VentasProductos.FirstOrDefault().Producto" class="form-control" asp-items="ViewBag.ProductoNombre"></select>
+                <span asp-validation-for="VentasProductos.FirstOrDefault().Producto" class="text-danger"></span>
+            </div> 
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>

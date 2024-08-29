@@ -16,12 +16,15 @@ namespace RomaF5.Data
 		}
 
 		// Agrega los DbSet para tus entidades
-		public DbSet<Venta> Ventas { get; set; }
-		public DbSet<Cancha> Canchas { get; set; }
-		public DbSet<Cliente> Clientes { get; set; }
-		public DbSet<Producto> Productos { get; set; }
-		public DbSet<Turno> Turnos { get; set; }
-		public DbSet<VentaProducto> VentaProductos { get; set; }
+		public DbSet<Venta>? Ventas { get; set; }
+		public DbSet<Cancha>? Canchas { get; set; }
+		public DbSet<Cliente>? Clientes { get; set; }
+		public DbSet<Producto>? Productos { get; set; }
+		public DbSet<Turno>? Turnos { get; set; }
+		public DbSet<VentaProducto>? VentaProductos { get; set; }
+        public DbSet<Proveedor>? Proveedor { get; set; }
+        public DbSet<ProductoProveedor>? ProductoProveedores { get; set; }    
+
         // ...
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{
@@ -39,22 +42,35 @@ namespace RomaF5.Data
 				.HasForeignKey(vp => vp.VentaId);
 
 			modelBuilder.Entity<Producto>()
-				.HasMany(p => p.VentasProductos)
+				.HasMany(p => p.VentasProductos)				
 				.WithOne(vp => vp.Producto)
 				.HasForeignKey(vp => vp.ProductoId);
 
 			modelBuilder.Entity<VentaProducto>()
 				.HasKey(vp => new { vp.VentaId, vp.ProductoId });
+            
+            modelBuilder.Entity<Producto>()
+            .HasMany(p => p.ProductoProveedores)
+            .WithOne(vp => vp.Producto)
+            .HasForeignKey(vp => vp.ProductoId);
 
-         //   modelBuilder.Entity<IdentityUserLogin<string>>(entity =>
-         //   {
-         //       entity.HasKey(l => new { l.LoginProvider, l.ProviderKey, l.UserId });
-         //   });
+            modelBuilder.Entity<Proveedor>()
+              .HasMany(p => p.ProductoProveedores)
+              .WithOne(vp => vp.Proveedor)
+              .HasForeignKey(vp => vp.ProveedorId);
 
-         //   modelBuilder.Entity<IdentityUserRole<string>>().HasKey(ur => new { ur.UserId, ur.RoleId });
+            modelBuilder.Entity<ProductoProveedor>()
+                .HasKey(vp => new { vp.ProveedorId, vp.ProductoId });
 
-         //   modelBuilder.Entity<IdentityUserRole<string>>()
-									//.HasKey(r => new { r.UserId, r.RoleId });
+            //   modelBuilder.Entity<IdentityUserLogin<string>>(entity =>
+            //   {
+            //       entity.HasKey(l => new { l.LoginProvider, l.ProviderKey, l.UserId });
+            //   });
+
+            //   modelBuilder.Entity<IdentityUserRole<string>>().HasKey(ur => new { ur.UserId, ur.RoleId });
+
+            //   modelBuilder.Entity<IdentityUserRole<string>>()
+            //.HasKey(r => new { r.UserId, r.RoleId });
             // ...
         }
 	}

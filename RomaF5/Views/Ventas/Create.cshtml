@@ -1,52 +1,87 @@
-﻿@model RomaF5.Models.Venta
+﻿
+@model RomaF5.Models.Venta
 
 @{
     ViewData["Title"] = "Create";
-    Layout = "~/Views/Shared/_Layout.cshtml";    
-    var productos = (List<Producto>)ViewBag.Productos;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var productos = (List<Producto>)ViewBag.Productos;  
 }
 
 <h4 style="text-align:center">Venta</h4>
 <hr />
 <div class="row">
     <div class="col-md-6">
-        <form asp-action="Create">
+        <!-- Lista de productos seleccionados -->
+        <div class="form-group">
+            <label style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">Carrito:</label>
+            <ul id="productosSeleccionados"></ul>
+            <label id="totalLabel">Total: $0.00</label>
+            <input type="hidden" id="total" name="Total" value="" />
+            <input type="hidden" id="productos" name="VentasProductos" value="" />
+        </div>
+        @if (!string.IsNullOrEmpty(ViewBag.StockAlert))
+        {
+            <div class="alert alert-success">
+                @ViewBag.StockAlert
+            </div>
+        }
+    </div>
+    <div class="col-md-6">
+        <form asp-action="Create" asp-controller="Ventas">
             <div class="form-group">
                 <label asp-for="Fecha" class="control-label"></label>
                 <input asp-for="Fecha" class="form-control" />
                 <span asp-validation-for="Fecha" class="text-danger"></span>
             </div>
+            <div class="form-group" id="NumeroDeCuotas" style="display:none;">
+                <label asp-for="NumeroCuotas" class="control-label"></label>
+                <input asp-for="NumeroCuotas" class="form-control" />
+                <span asp-validation-for="NumeroCuotas" class="text-danger"></span>
+            </div>
+            <div class="form-group" id="_Cuotas"></div> 
             <div class="form-group">
                 <label>Cliente:</label>
                 <select asp-for="ClienteId" class="form-control">
                     @foreach (var cliente in ViewBag.Clientes)
                     {
-                        <option value="@cliente.Id">@cliente.Nombre</option>
+                        <option value="@cliente.Id" data-cliente-tipo="@cliente.Nombre">@cliente.Nombre</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <select asp-for="TipoPago">
+                    @foreach (var tipoDePago in ViewBag.TipoDePago)
+                    {
+                        <option value="@tipoDePago">@tipoDePago</option>
                     }
                 </select>
             </div>
             <div class="form-group">
                 <label>Productos:</label>
                 <input type="text" id="searchInput" class="form-control" placeholder="Buscar producto..." />
+
                 <table class="table table-bordered">
                     <thead>
                         <tr>
                             <th>Producto</th>
+                            
                             <th>Cantidad</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var producto in productos.Take(5))
+                        @foreach (var producto in productos)
                         {
-                            <tr class="productRow">
+                            <tr class="productRow" data-precio="@producto.Precio" data-precio-minorista="@producto.PrecioVenta" data-precio-mayorista="@producto.PrecioMayorista">
                                 <td>
                                     <input type="hidden" name="VentasProductos.Index" value="@producto.Id" />
                                     <input type="hidden" name="VentasProductos[@producto.Id].ProductoId" value="@producto.Id" />
-                                    <label>@producto.Nombre</label>
+                                    <label>@producto.Nombre</label>                                    
+                                    
                                 </td>
+                                
                                 <td>
                                     <select name="VentasProductos[@producto.Id].Cantidad" class="form-control">
-                                        @for (int i = 0; i <= 10; i++)
+                                        @for (int i = 0; i <= 1000; i++)
                                         {
                                             <option value="@i" selected="@(i == 0)">@(i.ToString())</option>
                                         }
@@ -57,23 +92,14 @@
                     </tbody>
                 </table>
             </div>
-            <button type="submit" class="btn btn-primary">Guardar</button>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
         </form>
     </div>
-    <div class="col-md-6">
-        <!-- Lista de productos seleccionados -->
-        <div class="form-group">
-            <label style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">Carrito:</label>
-            <ul id="productosSeleccionados"></ul>
-        </div>
-    </div>
 </div>
-@if (!string.IsNullOrEmpty(ViewBag.StockAlert))
-{
-    <div class="alert alert-success">
-        @ViewBag.StockAlert
-    </div>
-}
+
+
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
@@ -83,5 +109,28 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     <script src="~/js/Venta.js"></script>
-}
+    <script>
+        $(document).ready(function () {
+            $('#TipoPago').change(function () {
+                var tipoPago = $(this).val();
+                if (tipoPago == 'Cuotas') {
+                    $.ajax({
+                        url: '/Ventas/_Cuotas',
+                        type: 'GET',
+                        success: function (partialView) {
+                            $('#_Cuotas').html(partialView);
+                            $('#_Cuotas').show();
+                        }
+                    });
+                    $('#NumeroDeCuotas').show();
+                } else {
+                    $('#_Cuotas').hide();
+                    $('#NumeroDeCuotas').hide();
+                }
+            });
+        });
+    </script>
 
+ 
+  
+}

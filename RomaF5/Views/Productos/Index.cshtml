@@ -2,7 +2,8 @@
 
 @{
     ViewData["Title"] = "Index";
-    Layout = "~/Views/Shared/_Layout.cshtml";    
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var paginatedList = ViewBag.PaginatedList;
 }
 
 <h1 style="text-align:center">Productos</h1>
@@ -10,74 +11,104 @@
 <p>
     <a asp-action="Create">CREAR PRODUCTO</a>
 </p>
-<!-- Formulario de búsqueda -->
-<div class="form-group" >
-    <input type="text" id="searchInput" class="form-control" placeholder="Buscar producto..." />
-    <button type="button" class="btn btn-primary mt-2" onclick="filtrarProductos()">Buscar</button>
-</div>
+<form method="post" action="/Productos/DescargarPdfM" style="display:inline-block">
+    <input type="hidden" name="esMayorista" value="true">
+    <button type="submit" class="btn btn-success">Descargar PDF Mayorista</button>
+</form>
 
-<table  id="productosTable" class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.First().Nombre)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.First().Precio)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.First().Stock)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nombre)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Precio)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Stock)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Detalles</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Borrar</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<form method="post" action="/Productos/DescargarPdfV" style="display:inline-block">
+    <input type="hidden" name="esMayorista" value="false">
+    <button type="submit" class="btn btn-success">Descargar PDF Minorista</button>
+</form>
+
+<br />
+<div class="form-group">
+    <form action="@Url.Action("IndexSearch", "Productos")" method="get">
+        <input type="text" class="form-control" name="searchTerm" />
+        <input class="btn btn-primary mt-2" type="submit" value="Buscar" style="display: inline-block" />
+    </form>
+</div>
 
 <div class="pagination-container">
     <partial name="_Paginacion" model="Model" />
 </div>
 
-@section Scripts {
-    <script>
-        function filtrarProductos() {
-            var input, filter, table, tr, td, i, txtValue;
-            input = document.getElementById("searchInput");
-            filter = input.value.toUpperCase();
-            table = document.getElementById("productosTable");
-            tr = table.getElementsByTagName("tr");
-
-            for (i = 0; i < tr.length; i++) {
-                td = tr[i].getElementsByTagName("td")[0]; // 0 representa la columna de Nombre del producto
-                if (td) {
-                    txtValue = td.textContent || td.innerText;
-                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
-                }
+<table id="productosTable" class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Nombre)
+            </th>
+            @if (User.IsInRole("ADMIN"))
+            {
+                <th>
+                  PrecioCompra@* @Html.DisplayNameFor(model => model.First().Precio) *@
+                </th>
             }
+            
+            <th>
+                PrecioMinorista@* @Html.DisplayNameFor(model => model.First().PrecioVenta) *@
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().PrecioMayorista)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Stock)
+            </th>
+            @* <th>
+                Imagen
+            </th> *@
+            <th>
+                Proveedor
+            </th>
+            
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nombre)
+                </td>
+                @if (User.IsInRole("ADMIN"))
+                {
+                    <td>
+                    @Html.DisplayFor(modelItem => item.Precio)
+                    </td>
+                }
+                
+                <td>
+                    @Html.DisplayFor(modelItem => item.PrecioVenta)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PrecioMayorista)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Stock)
+                </td>                
+                @* <td class="imagen-container">
+                    <img src="@Url.Content(item.RutaImagen)" alt="Imagen de @item.Nombre" class="imagen-responsive" />
+                </td> *@
+                <td>
+                    <ul>
+                        @foreach (var proveedor in item.ProductoProveedores)
+                        {
+                            <li>@proveedor.Proveedor.Nombre</li>
+                        }
+                    </ul>
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Detalles</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Borrar</a>                   
+                </td>
+            </tr>
         }
-    </script>
-}
+    </tbody>
+</table>
+
+
+
 

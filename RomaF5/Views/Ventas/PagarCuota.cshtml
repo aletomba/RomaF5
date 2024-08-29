@@ -1,0 +1,82 @@
+﻿@model RomaF5.Models.Venta
+
+@{
+    ViewData["Title"] = "PagarCuota";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Pagar Cuota</h1>
+
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        @if (!string.IsNullOrEmpty(ViewBag.Mensaje))
+        {
+            <div class="alert alert-success">
+                @ViewBag.Mensaje
+            </div>
+        }
+        <form asp-action="PagarCuota">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Fecha" class="control-label"></label>
+                <input asp-for="Fecha" class="form-control" disabled/>
+                <span asp-validation-for="Fecha" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Cliente.Nombre" class="control-label"></label>
+                <select asp-for="Cliente.Nombre" class="form-control" asp-items="ViewBag.ClienteNombre" disabled></select>
+                <span asp-validation-for="Cliente.Nombre" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Productos</label>
+                <select class="form-control" asp-items="ViewBag.ProductoNombre" multiple disabled>
+                    @foreach (var vp in Model.VentasProductos)
+                    {
+                        <option selected>@vp.Producto.Nombre</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="NumeroCuotas" class="control-label"></label>
+                <input asp-for="NumeroCuotas" class="form-control" disabled/>
+                <span asp-validation-for="NumeroCuotas" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CuotasPagas" class="control-label"></label>
+                <input asp-for="CuotasPagas" class="form-control" disabled />
+                <span asp-validation-for="CuotasPagas" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MontoPagado" class="control-label"></label>
+                <input asp-for="MontoPagado" class="form-control" disabled />
+                <span asp-validation-for="MontoPagado" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Total" class="control-label"></label>
+                <input asp-for="Total" class="form-control" disabled />
+                <span asp-validation-for="Total" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <label for="monto" class="control-label">Monto</label>
+                <input type="number" id="monto" name="monto" class="form-control" />
+            </div>            
+            <div class="form-group">
+                <input type="submit" value="Pagar Cuota" class="btn btn-primary" />
+            </div>          
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

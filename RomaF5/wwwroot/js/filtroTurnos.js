@@ -16,6 +16,8 @@
         calcularTotalDia();
     });
 
+
+
     function filtrarVentasPorFecha(fecha) {
         var filasVentas = tablaVentas.querySelectorAll("tbody tr");
 

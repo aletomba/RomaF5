@@ -45,7 +45,7 @@
             <div class="form-group">
                 <label asp-for="ClienteId" class="control-label"></label>
                 <div class="input-group">
-                    <select asp-for="ClienteId" class="form-control" asp-items="ViewBag.ClienteId"></select>
+                    <select asp-for="ClienteId" class="form-control" asp-items="new SelectList(ViewBag.Proveedores)"></select>
                     <div class="input-group-append">
                         <a href="@Url.Action("Create", "Clientes")" class="btn btn-link">                            
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-add" viewBox="0 0 16 16">
