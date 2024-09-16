@@ -1,16 +1,32 @@
-﻿@if (Model.PageCount > 1)
+﻿
+@if (Model.PageCount > 1)
 {
     <div class="pagination">
         @if (Model.HasPreviousPage)
         {
-            <a href="@Url.Action("Index", new { page = Model.PageNumber - 1 })">Anterior</a>
+            @if (ViewContext.RouteData.Values["action"].ToString() == "Create")
+            {
+                <a href="@Url.Action("Create", new { page = Model.PageNumber - 1, searchQuery = ViewBag.SearchQuery != null ? @ViewBag.SearchQuery : string.Empty })">Anterior</a>
+            }
+            else
+            {
+                <a href="@Url.Action("Index", new { id = ViewBag.Id, page = Model.PageNumber - 1, searchQuery = ViewBag.SearchQuery != null ? @ViewBag.SearchQuery : string.Empty })">Anterior</a>
+            }
         }
 
         <span>@Model.PageNumber </span>
 
         @if (Model.HasNextPage)
         {
-            <a href="@Url.Action("Index", new { page = Model.PageNumber + 1 })">Siguiente</a>
+            @if (ViewContext.RouteData.Values["action"].ToString() == "Create")
+            {
+                <a href="@Url.Action("Create", new { page = Model.PageNumber + 1, searchQuery = ViewBag.SearchQuery != null ? @ViewBag.SearchQuery : string.Empty })">Siguiente</a>
+            }
+            else
+            {
+                <a href="@Url.Action("Index", new { id = ViewBag.Id, page = Model.PageNumber + 1, searchQuery = ViewBag.SearchQuery != null ? @ViewBag.SearchQuery : string.Empty })">Siguiente</a>
+            }
         }
     </div>
 }
+

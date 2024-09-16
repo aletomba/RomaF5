@@ -64,12 +64,13 @@ namespace RomaF5.Controllers
         }
 
         // GET: Ventas/Create
-        public async Task <IActionResult> Create()
+        public async Task <IActionResult> Create(int? page, int pageSize = 10)
         {
             var tipoDePagos = Enum.GetValues(typeof(TipoPago)).Cast<TipoPago>().ToList();
             var venta = new Venta { TipoPago = TipoPago.Efectivo };
             ViewBag.Clientes = await _clienteRepo.GetAllAsync(); 
-            ViewBag.Productos = await _prodRepo.GetAllAsync();
+            var productos = await _prodRepo.GetAllAsync();
+            ViewBag.Productos = productos;
             ViewBag.TipoDePago = tipoDePagos;   
             return View(venta);
         }

@@ -4,7 +4,7 @@
 @{
     ViewData["Title"] = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    var productos = (List<Producto>)ViewBag.Productos;  
+    var productos = ViewBag.Productos;  
 }
 
 <h4 style="text-align:center">Venta</h4>
@@ -67,7 +67,7 @@
                             
                             <th>Cantidad</th>
                         </tr>
-                    </thead>
+                    </thead>                   
                     <tbody>
                         @foreach (var producto in productos)
                         {

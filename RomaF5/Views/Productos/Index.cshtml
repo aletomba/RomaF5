@@ -22,9 +22,16 @@
 </form>
 
 <br />
-<div class="form-group">
+@* <div class="form-group">
     <form action="@Url.Action("IndexSearch", "Productos")" method="get">
         <input type="text" class="form-control" name="searchTerm" />
+        <input class="btn btn-primary mt-2" type="submit" value="Buscar" style="display: inline-block" />
+    </form>
+</div> aca quede, ver como le paso la busqueda al metodo index, cambie el metodo de paginacion cree un servicio, falta esto para 
+ver si funciona, y poder paginar las busquedas *@
+<div class="form-group">
+    <form action="Index" method="get">
+        <input type="text" class="form-control" name="searchQuery" />
         <input class="btn btn-primary mt-2" type="submit" value="Buscar" style="display: inline-block" />
     </form>
 </div>

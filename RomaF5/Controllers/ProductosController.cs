@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using PagedList;
 using RomaF5.IRepository;
 using RomaF5.Models;
+using RomaF5.Models.productosViewModels;
+using RomaF5.Service;
 using System.Drawing.Printing;
 
 namespace RomaF5.Controllers
@@ -16,14 +18,16 @@ namespace RomaF5.Controllers
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly ProveedorRepository _proveedorRepository;
         private readonly ProductoRepo _productorRepo;
+        private readonly IPaginationService _pageService;   
 
 
         public ProductosController(ProveedorRepository proveedorRepository,
-            ProductoRepo productorRepo, IWebHostEnvironment webHostEnvironment)
+            ProductoRepo productorRepo, IWebHostEnvironment webHostEnvironment, IPaginationService pageService)
         {			      
             _proveedorRepository = proveedorRepository;
             _productorRepo = productorRepo;
-            _webHostEnvironment = webHostEnvironment;   
+            _webHostEnvironment = webHostEnvironment;
+            _pageService = pageService;
         }
 
         // GET: Productos
@@ -33,56 +37,82 @@ namespace RomaF5.Controllers
             var producto =  await _productorRepo.GetProducts();
             return View(producto);
         }
-        [HttpGet]
-        public async Task<IActionResult> Index(int? page, int id)
+    
+        public async Task<IActionResult> Index(int id,int? page, int pageSize = 10, string searchQuery = null)
         {
-            int pageSize = 10; // Define el número de elementos por página
-            int pageNumber = page ?? 1;
-            
-            if (id == 0)
+            if(id != 0)
             {
-                var prodcuto = await _productorRepo.GetProducts();
-                
-                var productosPaginados = prodcuto.ToPagedList(pageNumber, pageSize);
+                ViewBag.Id = id;
+                ViewBag.SearchQuery = searchQuery;
+                if (!string.IsNullOrEmpty(searchQuery))
+                {
 
-                return View(productosPaginados);
-            }
+                    var proveedor = await _proveedorRepository.GetProductosByProveedorId(id);
+                    if (proveedor == null)
+                    {
+                        return NotFound();
+                    }
+                    var productosXProvPaginados = proveedor.ToPagedList(page ?? 1, pageSize);
 
-            var proveedor = await _proveedorRepository.GetProductosByProveedorId(id);
-            if(proveedor == null)
+                    return View(productosXProvPaginados);
+                }
+                else
+                {
+                    var proveedor = await _proveedorRepository.GetProductosByProveedorId(id);
+                    if (proveedor == null)
+                    {
+                        return NotFound();
+                    }
+
+                    var productosXProvPaginados = proveedor.ToPagedList(page ?? 1, pageSize);
+
+                    return View(productosXProvPaginados);
+                }                 
+             
+            }//falta que dentro de un proveedor busque un nombre
+            else
             {
-                return NotFound();
+                ViewBag.SearchQuery = searchQuery;
+                if (!string.IsNullOrEmpty(searchQuery))
+                {
+
+                    var productos = _productorRepo.Buscar(searchQuery);
+                    return View(productos.ToPagedList(page ?? 1, pageSize));
+                }
+                else
+                {
+                    var productos = await _productorRepo.GetProducts();
+                    return View(productos.ToPagedList(page ?? 1, pageSize));
+                }
             }
-
-            var productosXProvPaginados = proveedor.ToPagedList(pageNumber, pageSize);
-
-            return View(productosXProvPaginados);
-         
+           
         }
-        public ActionResult IndexSearch(string searchTerm, int? page)
-        {
-            if (string.IsNullOrEmpty(searchTerm))
-            {
-                return RedirectToAction("Index"); // o return View("Index"); si prefieres mostrar la vista original
-            }
-            int pageSize = 10; // Define el número de elementos por página
-            int pageNumber = page ?? 1;
+        //public ActionResult IndexSearch(string searchTerm, int? page)
+        //{
+        //    if (string.IsNullOrEmpty(searchTerm))
+        //    {
+        //        return RedirectToAction("Index"); // o return View("Index"); si prefieres mostrar la vista original
+        //    }
+        //    int pageSize = 10; // Define el número de elementos por página
+        //    int pageNumber = page ?? 1;
+        //    ViewBag.ActionName = "IndexSearch";
+        //    ViewBag.SearchQuery = searchTerm;
+        //    // Método que muestra los resultados de la búsqueda
+        //    var productos = _productorRepo.Buscar(searchTerm);
+        //    var productosPaginados = productos.ToPagedList(pageNumber, pageSize);
+        
+        //    return View("Index", productosPaginados);
+        //}
 
-            // Método que muestra los resultados de la búsqueda
-            var productos = _productorRepo.Buscar(searchTerm);
-            var productosPaginados = productos.ToPagedList(pageNumber, pageSize);
-            return View("Index", productosPaginados);
-        }
-
-        [HttpGet]
-        public ActionResult Buscar(string searchTerm, int? page)
-        {
-            int pageSize = 10; // Define el número de elementos por página
-            int pageNumber = page ?? 1;
-            var productos = _productorRepo.Buscar(searchTerm);
-            var productosPaginados = productos.ToPagedList(pageNumber, pageSize);
-            return Json(productosPaginados);
-        }
+        //[HttpGet]
+        //public ActionResult Buscar(string searchTerm, int? page)
+        //{
+        //    int pageSize = 10; // Define el número de elementos por página
+        //    int pageNumber = page ?? 1;
+        //    var productos = _productorRepo.Buscar(searchTerm);
+        //    var productosPaginados = productos.ToPagedList(pageNumber, pageSize);
+        //    return Json(productosPaginados);
+        //}
 
         [Authorize(Roles ="ADMIN")]
         // GET: Productos/Details/5

@@ -22,8 +22,8 @@ namespace RomaF5.IRepository
         }
         public IEnumerable<Producto> Buscar(string searchTerm)
         {
-            return _context.Productos
-                .Where(p => p.Nombre.ToLower().Contains(searchTerm.ToLower()))
+            return _context.Productos.Include(x=>x.ProductoProveedores).ThenInclude(x=>x.Proveedor)
+                .Where(p => p.Nombre.ToLower().Contains(searchTerm.ToLower())).OrderBy(x=>x.Nombre)
                 .ToList();
         }
 

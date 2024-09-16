@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RomaF5.Data;
 using RomaF5.IRepository;
+using RomaF5.Service;
 using Rotativa.AspNetCore;
 
 
@@ -39,10 +40,12 @@ builder.Services.AddScoped<TurnoRepository>();
 builder.Services.AddScoped<VentaRepository>();
 builder.Services.AddScoped<ProductoRepo>();
 builder.Services.AddScoped<ProveedorRepository>();
+builder.Services.AddTransient<IPaginationService,PaginationService>();
 
 
 
 var app = builder.Build();
+
 
 var env = app.Services.GetRequiredService<IWebHostEnvironment>();
 if (env.IsDevelopment())
